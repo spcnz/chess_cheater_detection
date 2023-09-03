@@ -1,0 +1,1 @@
+{"type":"record","name":"GamePlayer","namespace":"yauza.avro.message.chess","fields":[{"name":"user","type":"GameUser"},{"name":"rating","type":"int"}]}
