@@ -1,0 +1,19 @@
+{
+  "name": "GameClock",
+  "type": "record",
+  "namespace": "yauza.avro.message.chess",
+  "fields": [
+    {
+      "name": "initial",
+      "type": "int"
+    },
+    {
+      "name": "increment",
+      "type": "int"
+    },
+    {
+      "name": "totalTime",
+      "type": "int"
+    }
+  ]
+}

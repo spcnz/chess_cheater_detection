@@ -1,0 +1,28 @@
+{
+    "type": "record",
+    "name": "GameResultVariant",
+    "namespace": "yauza.avro.message.chess",
+    "fields": [
+        {
+            "name": "key",
+            "type": {
+                "type": "string",
+                "avro.java.string": "String"
+            }
+        },
+        {
+            "name": "name",
+            "type": {
+                "type": "string",
+                "avro.java.string": "String"
+            }
+        },
+        {
+            "name": "short",
+            "type": {
+                "type": "string",
+                "avro.java.string": "String"
+            }
+        }
+    ]
+}

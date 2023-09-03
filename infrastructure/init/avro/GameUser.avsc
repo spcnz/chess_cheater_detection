@@ -1,0 +1,21 @@
+{
+  "name": "GameUser",
+  "type": "record",
+  "namespace": "yauza.avro.message.chess",
+  "fields": [
+    {
+      "name": "name",
+      "type": {
+        "type": "string",
+        "avro.java.string": "String"
+      }
+    },
+    {
+      "name": "id",
+      "type": {
+        "type": "string",
+        "avro.java.string": "String"
+      }
+    }
+  ]
+}

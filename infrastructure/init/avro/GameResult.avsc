@@ -1,0 +1,109 @@
+{
+    "type": "record",
+    "name": "GameResult",
+    "namespace": "yauza.avro.message.chess",
+    "fields": [
+        {
+            "name": "id",
+            "type": {
+                "type": "string",
+                "avro.java.string": "String"
+            }
+        },
+        {
+            "name": "variant",
+            "type": "yauza.avro.message.chess.GameResultVariant"
+        },
+        {
+            "name": "speed",
+            "type": {
+                "type": "string",
+                "avro.java.string": "String"
+            }
+        },
+        {
+            "name": "perf",
+            "type": {
+                "type": "string",
+                "avro.java.string": "String"
+            }
+        },
+        {
+            "name": "rated",
+            "type": {
+                "type": "boolean"
+            }
+        },
+        {
+            "name": "fen",
+            "type": {
+                "type": "string",
+                "avro.java.string": "String"
+            }
+        },
+        {
+            "name": "player",
+            "type": {
+                "type": "string",
+                "avro.java.string": "String"
+            }
+        },
+        {
+            "name": "turns",
+            "type": "long"
+        },
+        {
+            "name": "startedAtTurn",
+            "type": "long"
+        },
+        {
+            "name": "source",
+            "type": {
+                "type": "string",
+                "avro.java.string": "String"
+            }
+        },
+        {
+            "name": "status",
+            "type": "yauza.avro.message.chess.GameResultStatus"
+        },
+        {
+            "name": "createdAt",
+            "type": "long"
+        },
+        {
+            "name": "winner",
+            "type": {
+                "type": "string",
+                "avro.java.string": "String"
+            }
+        },
+        {
+            "name": "lastMove",
+            "type": {
+                "type": "string",
+                "avro.java.string": "String"
+            }
+        },
+        {
+            "name": "check",
+            "type": [
+                "null",
+                {
+                "type": "string",
+                "avro.java.string": "String"
+                }
+            ]
+        },
+        {
+            "name": "rematch",
+            "type": [
+                "null",
+                {
+                "type": "string",
+                "avro.java.string": "String"
+                }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,15 @@
+{
+  "type": "record",
+  "name": "PuzzleStatistic",
+  "namespace": "yauza.avro.message.chess",
+  "fields": [
+    {
+      "name": "runs",
+      "type": "long"
+    },
+    {
+      "name": "score",
+      "type": "long"
+    }
+  ]
+}

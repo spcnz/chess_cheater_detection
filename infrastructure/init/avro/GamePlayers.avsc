@@ -1,0 +1,15 @@
+{
+  "name": "GamePlayers",
+  "type": "record",
+  "namespace": "yauza.avro.message.chess",
+  "fields": [
+    {
+      "name": "white",
+      "type": "yauza.avro.message.chess.GamePlayer"
+    },
+    {
+      "name": "black",
+      "type": "yauza.avro.message.chess.GamePlayer"
+    }
+  ]
+}

@@ -1,0 +1,71 @@
+{
+  "type": "record",
+  "name": "Game",
+  "namespace": "yauza.avro.message.chess",
+  "fields": [
+    {
+      "name": "id",
+      "type": {
+        "type": "string",
+        "avro.java.string": "String"
+      }
+    },
+    {
+      "name": "rated",
+      "type": {
+        "type": "boolean"
+      }
+    },
+    {
+      "name": "variant",
+      "type": {
+        "type": "string",
+        "avro.java.string": "String"
+      }
+    },
+    {
+      "name": "speed",
+      "type": {
+        "type": "string",
+        "avro.java.string": "String"
+      }
+    },
+    {
+      "name": "perf",
+      "type": {
+        "type": "string",
+        "avro.java.string": "String"
+      }
+    },
+    {
+      "name": "createdAt",
+      "type": "long"
+    },
+    {
+      "name": "lastMoveAt",
+      "type": "long"
+    },
+    {
+      "name": "status",
+      "type": {
+        "type": "string",
+        "avro.java.string": "String"
+      }
+    },
+    {
+      "name": "players",
+      "type": "yauza.avro.message.chess.GamePlayers"
+    },
+    {
+      "name": "moves",
+      "type": {
+        "type": "string",
+        "avro.java.string": "String"
+      }
+    },
+    {
+      "name": "clock",
+      "type": "yauza.avro.message.chess.GameClock"
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+    "type": "record",
+    "name": "GameResultStatus",
+    "namespace": "yauza.avro.message.chess",
+    "fields": [
+        {
+            "name": "id",
+            "type": "long"
+        },
+        {
+            "name": "name",
+            "type": {
+                "type": "string",
+                "avro.java.string": "String"
+            }
+        } 
+    ]
+}
