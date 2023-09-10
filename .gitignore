@@ -43,3 +43,8 @@ bin/
 *.class
 
 .sbtopts
+
+**/src/main/avro/*.avsc
+**/avro
+
+metals.sbt
