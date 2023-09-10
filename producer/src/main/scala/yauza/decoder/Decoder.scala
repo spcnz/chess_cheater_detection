@@ -3,8 +3,9 @@ package yauza.decoder
 import io.circe.jawn.decode
 import io.circe.generic.auto._
 import yauza.avro.message.chess.{Game, GameResult, Move, Player}
+import com.typesafe.scalalogging.LazyLogging
 
-trait Decoder {
+trait Decoder extends LazyLogging {
 
   val delimiter = "\n"
 
@@ -25,7 +26,7 @@ trait Decoder {
       .map { encodedMove =>
         decode[Move](encodedMove) match {
           case Right(move) => move
-          case Left(_)     => None
+          case Left(e)     => logger.info(s"Exception occurred while getting decoding move: $e")
         }
       }
       .collect { case move: Move => move }
@@ -36,7 +37,7 @@ trait Decoder {
       .map { encodedGameResult =>
         decode[GameResult](encodedGameResult) match {
           case Right(gameResult) => gameResult
-          case Left(_)           => None
+          case Left(e) => logger.info(s"Exception occurred while getting decoding game result: $e")
         }
       }
       .collect { case gameResult: GameResult => gameResult }
