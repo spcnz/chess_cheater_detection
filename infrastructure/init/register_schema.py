@@ -19,6 +19,7 @@ schema_references = {
             "subject": f"{namespace}.GamePlayer", "version": 1}],
     "GameStatistic": [],
     "Move": [],
+    "MoveWithScore": [],
     "PuzzleStatistic": [],
     "Game": [ {"name": f"{namespace}.GameClock", "subject": f"{namespace}.GameClock", "version": 1},
               {"name": f"{namespace}.GamePlayers", "subject": f"{namespace}.GamePlayers", "version": 1},
@@ -31,8 +32,12 @@ schema_references = {
     "GameResultVariant": [],
     "GameResult": [ {"name": f"{namespace}.GameResultStatus", "subject": f"{namespace}.GameResultStatus", "version": 1},
                     {"name": f"{namespace}.GameResultVariant", "subject": f"{namespace}.GameResultVariant", "version": 1},
-                  ]
-
+                  ],
+    "GameWithMove": [ {"name": f"{namespace}.GameClock", "subject": f"{namespace}.GameClock", "version": 1},
+              {"name": f"{namespace}.GamePlayers", "subject": f"{namespace}.GamePlayers", "version": 1},
+              {"name": f"{namespace}.GameClock", "subject": f"{namespace}.GameClock", "version": 1},
+            ],
+ 
 }
 
 def read_schema(path: str) -> str:
