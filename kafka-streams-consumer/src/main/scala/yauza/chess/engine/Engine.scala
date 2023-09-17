@@ -1,5 +1,4 @@
 package yauza.chess.engine
-import yauza.avro.message.chess.ScoreType
 
 import java.io.{InputStream, OutputStreamWriter}
 import scala.sys.process._
@@ -12,7 +11,7 @@ trait Engine {
   def start(): Unit
   private[engine] def setPosition(fen: String): Unit
   def getPointOfView(fen: String): String
-  def getPlayerScore(fen: String): (Long, ScoreType)
+  def getPlayerScore(fen: String): (Long, String)
   def close(): Unit = {
     inputStream.close()
     outputStream.close()

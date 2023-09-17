@@ -5,7 +5,7 @@ object MoveCategory {
   val Excellent = 1
   val Good = 2
   val Neutral = 3
-  val Innaccuracy = 4
+  val Inaccuracy = 4
   val Mistake = 5
   val Blunder = 6
 }

@@ -20,9 +20,13 @@ case class TopicConfig(
     input: InputTopicConfig,
     sink: SinkTopicConfig
 )
+case class StoreConfig(
+    game: String,
+    gameScore: String
+)
 
 case class EngineConfig(path: String)
-case class ChessAnalyzer(topic: TopicConfig, engine: EngineConfig)
+case class ChessAnalyzer(topic: TopicConfig, store: StoreConfig, engine: EngineConfig)
 
 case class Config(
     chessAnalyzer: ChessAnalyzer,

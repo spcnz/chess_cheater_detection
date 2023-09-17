@@ -1,4 +1,4 @@
-package yauza.chess.enum
+package yauza.chess
 
 object PlayerColor {
   val White = "w"

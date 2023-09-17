@@ -23,8 +23,10 @@ lazy val root = (project in file("."))
       Schema("yauza.avro.message.chess.PuzzleStatistic"),
       Schema("yauza.avro.message.chess.GameStatistic"),
       Schema("yauza.avro.message.chess.Player"),
-      Schema("yauza.avro.message.chess.GameWithMove"),
-      Schema("yauza.avro.message.chess.MoveWithScore")
+      Schema("yauza.avro.message.chess.GameScore"),
+      Schema("yauza.avro.message.chess.MoveWithScore"),
+      Schema("yauza.avro.message.chess.PlayerMove"),
+      Schema("yauza.avro.message.chess.GameWithMoveScore")
     ),
     Docker / packageName := "specnazm/chess-analyzer",
     Universal / mappings ++= Seq(

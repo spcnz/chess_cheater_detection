@@ -1,11 +1,11 @@
 package yauza.chess.mapper
 
-import yauza.avro.message.chess.{Move, MoveWithScore, ScoreType}
+import yauza.avro.message.chess._
 import yauza.chess.engine.Engine
 
 trait ChessAnalysisMapper {
   def mapMove(chessEngine: Engine): Move => MoveWithScore = (move: Move) => {
-    val (score, scoreType): (Long, ScoreType) = chessEngine.getPlayerScore(move.fen)
+    val (score, scoreType): (Long, String) = chessEngine.getPlayerScore(move.fen)
 
     MoveWithScore(
       gameId = move.gameId,

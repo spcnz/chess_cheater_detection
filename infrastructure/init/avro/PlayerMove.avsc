@@ -1,0 +1,53 @@
+{
+    "type": "record",
+    "name": "PlayerMove",
+    "namespace": "yauza.avro.message.chess",
+    "fields": [
+        {
+            "name": "id",
+            "type": {
+                "type": "string",
+                "avro.java.string": "String"
+            }
+        },
+        {
+            "name": "username",
+            "type": {
+                "type": "string",
+                "avro.java.string": "String"
+            }
+        },
+        {
+            "name": "gameId",
+            "type": {
+                "type": "string",
+                "avro.java.string": "String"
+            }
+        },
+        {
+            "name": "lastMove",
+            "type": "string"
+        },
+        {
+            "name": "label",
+            "type": {
+                "type": "enum",
+                "name": "MoveLabel",
+                "symbols": [
+                    "Blunder",
+                    "Mistake",
+                    "Inaccuracy",
+                    "Neutral",
+                    "Good",
+                    "Excellent",
+                    "Brilliant"
+                ]
+            }
+        },
+        {
+            "name": "score",
+            "type": "long",
+            "default": 0
+        }
+    ]
+}

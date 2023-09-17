@@ -1,0 +1,54 @@
+{
+    "type": "record",
+    "name": "MoveWithScore",
+    "namespace": "yauza.avro.message.chess",
+    "fields": [
+        {
+            "name": "gameId",
+            "type": [
+                "null",
+                {
+                    "type": "string",
+                    "avro.java.string": "String"
+                }
+            ],
+            "default": null
+        },
+        {
+            "name": "fen",
+            "type": {
+                "type": "string",
+                "avro.java.string": "String"
+            }
+        },
+        {
+            "name": "lm",
+            "type": {
+                "type": "string",
+                "avro.java.string": "String"
+            }
+        },
+        {
+            "name": "playerScore",
+            "type": "long"
+        },
+        {
+            "name": "scoreType",
+            "type": {
+                "type": "string",
+                "avro.java.string": "String"
+            }
+        },
+        {
+            "name": "playerColor",
+            "type": "string"
+        },
+        {
+            "name": "moveIndex",
+            "type": [
+                "null",
+                "long"
+            ]
+        }
+    ]
+}

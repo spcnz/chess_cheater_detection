@@ -1,8 +1,7 @@
 package yauza.chess.engine
 
 import com.typesafe.scalalogging.LazyLogging
-import yauza.avro.message.chess.ScoreType
-import yauza.chess.enum.PlayerColor
+import yauza.chess.{PlayerColor, ScoreType}
 
 import java.io.{InputStream, OutputStream, OutputStreamWriter}
 import scala.io.Source
@@ -55,7 +54,7 @@ case class StockfishEngine(
       case Failure(_) => throw new RuntimeException(s"No player color in fen: $fen")
     }
 
-  override def getPlayerScore(fen: String): (Long, ScoreType) = {
+  override def getPlayerScore(fen: String): (Long, String) = {
     setPosition(fen)
     inputStream.write(s"go depth ${depth} movetime ${searchTimeMillis}\n")
     inputStream.flush()
@@ -70,7 +69,7 @@ case class StockfishEngine(
       scoreInfo,
       centipawnScorePattern,
       centipawnPrefix.length,
-      ScoreType.CentiPawn
+      ScoreType.Centipawn
     )
 
     val mateScore: Option[Long] =
@@ -87,7 +86,7 @@ case class StockfishEngine(
       centipawnScore.getOrElse(mateScore.getOrElse {
         throw new RuntimeException(s"No score found. Score info: $scoreInfo. Fen: $fen")
       }),
-      centipawnScore.map(_ => ScoreType.CentiPawn).getOrElse(ScoreType.Mate)
+      centipawnScore.map(_ => ScoreType.Centipawn).getOrElse(ScoreType.Mate)
     )
   }
 
@@ -95,7 +94,7 @@ case class StockfishEngine(
       info: String,
       pattern: Regex,
       prefixLength: Int,
-      scoreType: ScoreType
+      scoreType: String
   ): Option[Long] =
     pattern
       .findFirstIn(info)

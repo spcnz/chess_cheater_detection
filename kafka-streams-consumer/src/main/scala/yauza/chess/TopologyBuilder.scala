@@ -1,22 +1,41 @@
 package yauza.chess
 
-import gaia.streams.common.StreamTopologyBuilder
+import com.typesafe.scalalogging.LazyLogging
 import org.apache.kafka.streams.Topology
 import org.apache.kafka.streams.scala.ImplicitConversions._
-import org.apache.kafka.streams.scala.kstream.KStream
+import org.apache.kafka.streams.scala.StreamsBuilder
+import org.apache.kafka.streams.scala.kstream.{KStream, KTable, Materialized}
 import org.apache.kafka.streams.scala.serialization.Serdes._
-import yauza.avro.message.chess.{Move, MoveWithScore}
+import org.apache.kafka.streams.state.Stores
+import yauza.avro.message.chess._
 import yauza.chess.engine.Engine
+import yauza.chess.joiner.MoveGameJoiner
 import yauza.chess.mapper.ChessAnalysisMapper
+import yauza.chess.processor.GameScoreProcessor
 
 case class TopologyBuilder(chessEngine: Engine)(implicit config: Config)
-    extends StreamTopologyBuilder
-    with Serdes
-    with ChessAnalysisMapper {
+    extends Serdes
+    with ChessAnalysisMapper
+    with MoveGameJoiner
+    with LazyLogging {
 
-  override def build: Topology = {
+  val builder: StreamsBuilder = new StreamsBuilder()
 
-    logger.info("Started topology moves")
+  def build: Topology = {
+
+    builder.addStateStore(
+      Stores.keyValueStoreBuilder(
+        Stores.persistentKeyValueStore(config.chessAnalyzer.store.gameScore),
+        stringSerde,
+        gameScoreSerde
+      )
+    )
+
+    val gameTable: KTable[String, Game] = builder
+      .table(
+        config.chessAnalyzer.topic.input.game,
+        Materialized.as(config.chessAnalyzer.store.game)
+      )
 
     val moveStream: KStream[String, MoveWithScore] =
       builder
@@ -28,7 +47,13 @@ case class TopologyBuilder(chessEngine: Engine)(implicit config: Config)
           }
         )
 
-    moveStream.to("test-topic")
+    moveStream
+      .join(gameTable)(joinMoveWithGame)
+      .process[String, PlayerMove](
+        () => GameScoreProcessor(config.chessAnalyzer.store.gameScore),
+        config.chessAnalyzer.store.gameScore
+      )
+      .to("test-topic")
 
     builder.build()
   }

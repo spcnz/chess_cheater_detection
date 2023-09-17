@@ -1,0 +1,87 @@
+{
+    "type": "record",
+    "name": "GameScore",
+    "namespace": "yauza.avro.message.chess",
+    "fields": [
+        {
+            "name": "id",
+            "type": {
+                "type": "string",
+                "avro.java.string": "String"
+            }
+        },
+        {
+            "name": "rated",
+            "type": "boolean"
+        },
+        {
+            "name": "variant",
+            "type": {
+                "type": "string",
+                "avro.java.string": "String"
+            }
+        },
+        {
+            "name": "speed",
+            "type": {
+                "type": "string",
+                "avro.java.string": "String"
+            }
+        },
+        {
+            "name": "perf",
+            "type": {
+                "type": "string",
+                "avro.java.string": "String"
+            }
+        },
+        {
+            "name": "createdAt",
+            "type": "long"
+        },
+        {
+            "name": "lastMoveAt",
+            "type": "long"
+        },
+        {
+            "name": "status",
+            "type": {
+                "type": "string",
+                "avro.java.string": "String"
+            }
+        },
+        {
+            "name": "players",
+            "type": "GamePlayers"
+        },
+        {
+            "name": "moves",
+            "type": {
+                "type": "string",
+                "avro.java.string": "String"
+            }
+        },
+        {
+            "name": "clock",
+            "type": "GameClock"
+        },
+        {
+            "name": "whiteScore",
+            "type": "long",
+            "default": 0
+        },
+        {
+            "name": "blackScore",
+            "type": "long",
+            "default": 0
+        },
+        {
+            "name": "fen",
+            "type": "string"
+        },
+        {
+            "name": "lastMove",
+            "type": "string"
+        }
+    ]
+}

@@ -46,5 +46,6 @@ bin/
 
 **/src/main/avro/*.avsc
 **/avro
+!infrastructure/init/avro/
 
 metals.sbt
