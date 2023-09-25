@@ -102,6 +102,7 @@ schema_references = {
             "version": 1,
         },
     ],
+    "PlayerGameKpi": [],
 }
 
 

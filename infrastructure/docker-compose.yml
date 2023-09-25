@@ -100,11 +100,11 @@ services:
       kafka-topics --bootstrap-server broker1:29092 --list
 
       echo -e 'Creating kafka topics'
-      kafka-topics --bootstrap-server broker1:29092 --create --if-not-exists --topic yauza.moves --replication-factor 3 --partitions 3
-      kafka-topics --bootstrap-server broker1:29092 --create --if-not-exists --topic yauza.players --replication-factor 3 --partitions 3
-      kafka-topics --bootstrap-server broker1:29092 --create --if-not-exists --topic yauza.games --replication-factor 3 --partitions 3
-      kafka-topics --bootstrap-server broker1:29092 --create --if-not-exists --topic yauza.game-results --replication-factor 3 --partitions 3
-      kafka-topics --bootstrap-server broker1:29092 --create --if-not-exists --topic test-topic --replication-factor 3 --partitions 3
+      kafka-topics --bootstrap-server broker1:29092 --create --if-not-exists --topic yauza.moves --replication-factor 3 --partitions 30
+      kafka-topics --bootstrap-server broker1:29092 --create --if-not-exists --topic yauza.players --replication-factor 3 --partitions 30
+      kafka-topics --bootstrap-server broker1:29092 --create --if-not-exists --topic yauza.games --replication-factor 3 --partitions 30
+      kafka-topics --bootstrap-server broker1:29092 --create --if-not-exists --topic yauza.game-results --replication-factor 3 --partitions 30
+      kafka-topics --bootstrap-server broker1:29092 --create --if-not-exists --topic kpi-topic --replication-factor 3 --partitions 30
 
       echo -e 'Successfully created the following topics:'
       kafka-topics --bootstrap-server broker1:29092 --list

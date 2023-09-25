@@ -1,0 +1,9 @@
+{
+    "type": "enum",
+    "name": "ScoreType",
+    "namespace": "yauza.avro.message.chess",
+    "symbols": [
+        "CENTIPAWN",
+        "MATE"
+    ]
+}
