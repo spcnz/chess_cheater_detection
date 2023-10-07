@@ -107,6 +107,10 @@
                     "avro.java.string": "String"
                 }
             ]
+        },
+        {
+            "name": "players",
+            "type": "yauza.avro.message.chess.GamePlayers"
         }
     ]
 }

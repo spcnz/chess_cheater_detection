@@ -67,6 +67,11 @@ schema_references = {
             "subject": f"{namespace}.GameResultVariant",
             "version": 1,
         },
+        {
+            "name": f"{namespace}.GamePlayers",
+            "subject": f"{namespace}.GamePlayers",
+            "version": 1,
+        },
     ],
     "GameWithMoveScore": [
         {

@@ -37,7 +37,7 @@ trait Decoder extends LazyLogging {
       .map { encodedGameResult =>
         decode[GameResult](encodedGameResult) match {
           case Right(gameResult) => gameResult
-          case Left(e) => logger.info(s"Exception occurred while getting decoding game result: $e")
+          case Left(e) => logger.info(s"Exception occurred while getting decoding game result: $e, $encodedGameResult")
         }
       }
       .collect { case gameResult: GameResult => gameResult }
