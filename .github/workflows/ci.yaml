@@ -31,6 +31,10 @@ jobs:
         restore-keys: ${{ runner.os }}-ivy-
 
     - name: Set up environment
+      env:
+        MYMAVENREPO_URL: ${{ secrets.MYMAVENREPO_URL }}
+        MYMAVENREPO_USERNAME: ${{ secrets.MYMAVENREPO_USERNAME }}
+        MYMAVENREPO_PASSWORD: ${{ secrets.MYMAVENREPO_PASSWORD }}
       run: |
         cd chess-analyzer
         echo "-Dmymavenrepo.url=${MYMAVENREPO_URL}" >> .sbtopts
