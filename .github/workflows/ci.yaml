@@ -43,6 +43,7 @@ jobs:
         echo "-Dsbt.global.base=sbt-cache/global" >> .sbtopts
         echo "-Dsbt.boot.directory=sbt-cache/boot" >> .sbtopts
         echo "-Dsbt.coursier.home=sbt-cache/coursier" >> .sbtopts
+        cat .sbtopts
 
     - name: Run SBT tests
       working-directory: chess-analyzer
