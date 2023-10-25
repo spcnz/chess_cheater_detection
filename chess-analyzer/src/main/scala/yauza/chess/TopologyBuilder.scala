@@ -56,15 +56,15 @@ case class TopologyBuilder(chessEngine: Engine)(implicit config: Config)
           Named.as(config.chessAnalyzer.store.game),
           Materialized
             .`with`(stringSerde, gameSerde)
-        )
+        ) // ovo with named named as ne radi, kreira se topic sa 0003-changelog za ovo
 
     val moveStream: KStream[String, MoveWithScore] =
       builder
         .stream[String, Move](config.chessAnalyzer.topic.input.move)
-//        .process[String, Move](
-//          () => UniqueUpdateProcessor[String, Move](config.chessAnalyzer.store.uniqueUpdates),
-//          config.chessAnalyzer.store.uniqueUpdates
-//        )
+        .process[String, Move](
+          () => UniqueUpdateProcessor[String, Move](config.chessAnalyzer.store.uniqueUpdates),
+          config.chessAnalyzer.store.uniqueUpdates
+        )
         .mapValues { move =>
           val (score, scoreType): (Long, String) = chessEngine.getPlayerScore(move.fen)
           val playerColor: String = chessEngine.getPointOfView(move.fen)
@@ -76,33 +76,26 @@ case class TopologyBuilder(chessEngine: Engine)(implicit config: Config)
           }
         )
 
-//    moveStream.groupByKey
-//      .windowedBy(SessionWindows.ofInactivityGapWithNoGrace(Duration.ofMinutes(5)))
-//      .count()
-//      .toStream(Named.as("processed-move-count"))
-//      .peek((k, v) =>
-//        logger.whenDebugEnabled {
-//          logger.debug(s"Produced count for move {key: ${k
-//              .key()}}: and window: ${k.window().start()} - ${k.window().end()} - ${k.window().end()}")
-//        }
-//      )
-//      .selectKey((w, value) => w.key())
-//      .to("test-topic")
+    val moveGameStream =
+      moveStream
+        .join(gameTable)(joinMoveWithGame)
+        .process[String, PlayerMove](
+          () => GameScoreProcessor(config.chessAnalyzer.store.gameScore),
+          config.chessAnalyzer.store.gameScore
+        )
+        .repartition(
+          Repartitioned
+            .`with`(config.chessAnalyzer.topic.sink.playerMoveScore)
+        )
+        .peek((k, v) =>
+          logger.whenDebugEnabled {
+            logger.debug(s"Joined move score ${v.lastMove} : ${v.score} with game: $k")
+          }
+        )
 
-    val playerMoveStream = moveStream
-      .join(gameTable)(joinMoveWithGame)
-      .process[String, PlayerMove](
-        () => GameScoreProcessor(config.chessAnalyzer.store.gameScore),
-        config.chessAnalyzer.store.gameScore
-      )
-      .repartition(
-        Repartitioned
-          .`with`(config.chessAnalyzer.topic.sink.playerMoveScore)
-      )
-
-    playerMoveStream
+    moveGameStream
       .groupBy((_, value) => value.id + "|" + value.gameId)
-      .windowedBy(SessionWindows.ofInactivityGapWithNoGrace(Duration.ofMinutes(5)))
+      .windowedBy(SessionWindows.ofInactivityGapWithNoGrace(Duration.ofSeconds(5)))
       .aggregate(initializer =
         PlayerGameKpi(
           id = "-1",
@@ -118,7 +111,10 @@ case class TopologyBuilder(chessEngine: Engine)(implicit config: Config)
       )
       .filter((_, v) => v != null)
       .selectKey((window, value) => value.id)
-      .to("kpi-topic")
+      .repartition(
+        Repartitioned
+          .`with`(config.chessAnalyzer.topic.sink.playerGameKpi)
+      )
 
     builder.build()
   }

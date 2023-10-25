@@ -9,59 +9,27 @@ trait PlayerGameKpiAggregator {
       id = playerMove.id,
       username = playerMove.username,
       gameId = playerMove.gameId,
-      brilliant_move_counter =
-        Some(updatedCounter(playerMove.label, kpi.brilliant_move_counter, MoveLabel.Brilliant)),
-      excellent_move_counter = Some(
-        updatedCounter(playerMove.label, kpi.excellent_move_counter, MoveLabel.Excellent)
+      brilliantMoveCounter =
+        Some(updatedCounter(playerMove.label, kpi.brilliantMoveCounter, MoveLabel.Brilliant)),
+      excellentMoveCounter = Some(
+        updatedCounter(playerMove.label, kpi.excellentMoveCounter, MoveLabel.Excellent)
       ),
-      good_move_counter =
-        Some(updatedCounter(playerMove.label, kpi.good_move_counter, MoveLabel.Good)),
-      inaccuracy_move_counter = Some(
-        updatedCounter(playerMove.label, kpi.inaccuracy_move_counter, MoveLabel.Inaccuracy)
+      goodMoveCounter = Some(updatedCounter(playerMove.label, kpi.goodMoveCounter, MoveLabel.Good)),
+      inaccuracyMoveCounter = Some(
+        updatedCounter(playerMove.label, kpi.inaccuracyMoveCounter, MoveLabel.Inaccuracy)
       ),
-      mistake_move_counter = Some(
-        updatedCounter(playerMove.label, kpi.mistake_move_counter, MoveLabel.Mistake)
+      mistakeMoveCounter = Some(
+        updatedCounter(playerMove.label, kpi.mistakeMoveCounter, MoveLabel.Mistake)
       ),
-      blunder_move_counter = Some(
-        updatedCounter(playerMove.label, kpi.blunder_move_counter, MoveLabel.Blunder)
+      blunderMoveCounter = Some(
+        updatedCounter(playerMove.label, kpi.blunderMoveCounter, MoveLabel.Blunder)
       )
     )
     // ovde videti sta cu ako je nula imenliac
-    newKpi.accuracy = Some(calcAccuracy(kpi))
+    newKpi.accuracy = Some(calcAccuracy(newKpi))
 
     newKpi
   }
-  def merge(key: String, previousKpi: PlayerGameKpi, newKpi: PlayerGameKpi): PlayerGameKpi =
-    PlayerGameKpi(
-      id = newKpi.id,
-      username = newKpi.username,
-      gameId = newKpi.gameId,
-      brilliant_move_counter = Some(
-        previousKpi.brilliant_move_counter.getOrElse(0L) + newKpi.brilliant_move_counter
-          .getOrElse(0L)
-      ),
-      excellent_move_counter = Some(
-        previousKpi.excellent_move_counter.getOrElse(0L) + newKpi.excellent_move_counter
-          .getOrElse(0L)
-      ),
-      good_move_counter = Some(
-        previousKpi.good_move_counter.getOrElse(0L) + newKpi.good_move_counter
-          .getOrElse(0L)
-      ),
-      inaccuracy_move_counter = Some(
-        previousKpi.inaccuracy_move_counter.getOrElse(0L) + newKpi.inaccuracy_move_counter
-          .getOrElse(0L)
-      ),
-      mistake_move_counter = Some(
-        previousKpi.mistake_move_counter.getOrElse(0L) + newKpi.mistake_move_counter
-          .getOrElse(0L)
-      ),
-      blunder_move_counter = Some(
-        previousKpi.blunder_move_counter.getOrElse(0L) + newKpi.blunder_move_counter
-          .getOrElse(0L)
-      ),
-      accuracy = newKpi.accuracy
-    )
 
   private def updatedCounter(
       moveLabel: MoveLabel,
@@ -72,16 +40,48 @@ trait PlayerGameKpiAggregator {
 
   private def calcAccuracy(kpi: PlayerGameKpi): Double =
     Seq(
-      kpi.brilliant_move_counter,
-      kpi.good_move_counter,
-      kpi.excellent_move_counter
+      kpi.brilliantMoveCounter,
+      kpi.goodMoveCounter,
+      kpi.excellentMoveCounter
     ).map(_.getOrElse(0L)).sum.toDouble / Seq(
-      kpi.brilliant_move_counter,
-      kpi.good_move_counter,
-      kpi.excellent_move_counter,
-      kpi.inaccuracy_move_counter,
-      kpi.mistake_move_counter,
-      kpi.blunder_move_counter
+      kpi.brilliantMoveCounter,
+      kpi.goodMoveCounter,
+      kpi.excellentMoveCounter,
+      kpi.inaccuracyMoveCounter,
+      kpi.mistakeMoveCounter,
+      kpi.blunderMoveCounter
     ).map(_.getOrElse(0L)).sum.toDouble
+
+  def merge(key: String, previousKpi: PlayerGameKpi, newKpi: PlayerGameKpi): PlayerGameKpi =
+    PlayerGameKpi(
+      id = newKpi.id,
+      username = newKpi.username,
+      gameId = newKpi.gameId,
+      brilliantMoveCounter = Some(
+        previousKpi.brilliantMoveCounter.getOrElse(0L) + newKpi.brilliantMoveCounter
+          .getOrElse(0L)
+      ),
+      excellentMoveCounter = Some(
+        previousKpi.excellentMoveCounter.getOrElse(0L) + newKpi.excellentMoveCounter
+          .getOrElse(0L)
+      ),
+      goodMoveCounter = Some(
+        previousKpi.goodMoveCounter.getOrElse(0L) + newKpi.goodMoveCounter
+          .getOrElse(0L)
+      ),
+      inaccuracyMoveCounter = Some(
+        previousKpi.inaccuracyMoveCounter.getOrElse(0L) + newKpi.inaccuracyMoveCounter
+          .getOrElse(0L)
+      ),
+      mistakeMoveCounter = Some(
+        previousKpi.mistakeMoveCounter.getOrElse(0L) + newKpi.mistakeMoveCounter
+          .getOrElse(0L)
+      ),
+      blunderMoveCounter = Some(
+        previousKpi.blunderMoveCounter.getOrElse(0L) + newKpi.blunderMoveCounter
+          .getOrElse(0L)
+      ),
+      accuracy = newKpi.accuracy
+    )
 
 }
