@@ -30,6 +30,17 @@ jobs:
         key: ${{ runner.os }}-ivy-${{ hashFiles('**/*.sbt') }}
         restore-keys: ${{ runner.os }}-ivy-
 
+    - name: Set up environment
+      run: |
+        cd etl/streams/player
+        echo "-Dmymavenrepo.url=${MYMAVENREPO_URL}" >> .sbtopts
+        echo "-Dmymavenrepo.username=${MYMAVENREPO_USERNAME}" >> .sbtopts
+        echo "-Dmymavenrepo.password=${MYMAVENREPO_PASSWORD}" >> .sbtopts
+        echo "-Dschema.registry.url=${SCHEMA_REGISTRY_URL}" >> .sbtopts
+        echo "-Dsbt.global.base=sbt-cache/global" >> .sbtopts
+        echo "-Dsbt.boot.directory=sbt-cache/boot" >> .sbtopts
+        echo "-Dsbt.coursier.home=sbt-cache/coursier" >> .sbtopts
+
     - name: Run SBT tests
       working-directory: chess-analyzer
       run: sbt test
