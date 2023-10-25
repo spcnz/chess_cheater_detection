@@ -1,0 +1,35 @@
+name: SBT Test
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Java
+      uses: actions/setup-java@v2
+      with:
+        java-version: 'adopt@1.11'
+
+    - name: Cache SBT dependencies
+      uses: actions/cache@v2
+      with:
+        path: ~/.sbt
+        key: ${{ runner.os }}-sbt-${{ hashFiles('**/build.sbt') }}
+        restore-keys: |
+          ${{ runner.os }}-sbt-
+
+    - name: Cache Ivy2 dependencies
+      uses: actions/cache@v2
+      with:
+        path: ~/.ivy2
+        key: ${{ runner.os }}-ivy-${{ hashFiles('**/*.sbt') }}
+        restore-keys: |
+          ${{ runner.os }}-ivy-
+
+    - name: Run SBT tests
+      run: sbt test
