@@ -105,6 +105,14 @@ services:
       kafka-topics --bootstrap-server broker1:29092 --create --if-not-exists --topic yauza.games --replication-factor 3 --partitions 30
       kafka-topics --bootstrap-server broker1:29092 --create --if-not-exists --topic yauza.game-results --replication-factor 3 --partitions 30
       kafka-topics --bootstrap-server broker1:29092 --create --if-not-exists --topic kpi-topic --replication-factor 3 --partitions 30
+      kafka-topics --bootstrap-server broker1:29092 --create --if-not-exists --topic yauza.move.score --replication-factor 3 --partitions 30
+      kafka-topics --bootstrap-server broker1:29092 --create --if-not-exists --topic game-score-store --replication-factor 3 --partitions 30
+      kafka-topics --bootstrap-server broker1:29092 --create --if-not-exists --topic unique-updates-store --replication-factor 3 --partitions 30
+      kafka-topics --bootstrap-server broker1:29092 --create --if-not-exists --topic yauza.player.kpi -replication-factor 3 --partitions 30
+      kafka-topics --bootstrap-server broker1:29092 --create --if-not-exists --topic yauza.player.suspicious -replication-factor 3 --partitions 30
+      kafka-topics --bootstrap-server broker1:29092 --create --if-not-exists --topic game-store --replication-factor 3 --partitions 30
+
+
 
       echo -e 'Successfully created the following topics:'
       kafka-topics --bootstrap-server broker1:29092 --list
