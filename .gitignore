@@ -44,7 +44,6 @@ bin/
 
 .sbtopts
 
-**/avro
 producer/src/main/scala/yauza/avro/*
 !infrastructure/init/avro/
 

@@ -10,7 +10,7 @@ import java.util.Properties
 import scala.reflect.io.Path
 
 class ChessAnalyzerTopologyTest extends TopologyTest with Serdes with GivenWhenThen {
-  
+
   var movesInputTopic: TestInputTopic[String, Move] = _
   var gamesInputTopic: TestInputTopic[String, Game] = _
   var moveScoreOutputTopic: TestOutputTopic[String, PlayerMove] = _

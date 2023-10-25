@@ -1,0 +1,132 @@
+/** MACHINE-GENERATED FROM AVRO SCHEMA. DO NOT EDIT DIRECTLY */
+package yauza.avro.message.chess
+
+import scala.annotation.switch
+
+final case class GameScore(
+    var id: String,
+    var rated: Boolean,
+    var variant: String,
+    var speed: String,
+    var perf: String,
+    var createdAt: Long,
+    var lastMoveAt: Long,
+    var status: String,
+    var players: GamePlayers,
+    var moves: String,
+    var clock: GameClock,
+    var whiteScore: Long = 0L,
+    var blackScore: Long = 0L,
+    var fen: String,
+    var lastMove: String
+) extends org.apache.avro.specific.SpecificRecordBase {
+  def this() =
+    this("", false, "", "", "", 0L, 0L, "", new GamePlayers, "", new GameClock, 0L, 0L, "", "")
+  def get(field$ : Int): AnyRef =
+    (field$ : @switch) match {
+      case 0 =>
+        id
+          .asInstanceOf[AnyRef]
+      case 1 =>
+        rated
+          .asInstanceOf[AnyRef]
+      case 2 =>
+        variant
+          .asInstanceOf[AnyRef]
+      case 3 =>
+        speed
+          .asInstanceOf[AnyRef]
+      case 4 =>
+        perf
+          .asInstanceOf[AnyRef]
+      case 5 =>
+        createdAt
+          .asInstanceOf[AnyRef]
+      case 6 =>
+        lastMoveAt
+          .asInstanceOf[AnyRef]
+      case 7 =>
+        status
+          .asInstanceOf[AnyRef]
+      case 8 =>
+        players
+          .asInstanceOf[AnyRef]
+      case 9 =>
+        moves
+          .asInstanceOf[AnyRef]
+      case 10 =>
+        clock
+          .asInstanceOf[AnyRef]
+      case 11 =>
+        whiteScore
+          .asInstanceOf[AnyRef]
+      case 12 =>
+        blackScore
+          .asInstanceOf[AnyRef]
+      case 13 =>
+        fen
+          .asInstanceOf[AnyRef]
+      case 14 =>
+        lastMove
+          .asInstanceOf[AnyRef]
+      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+    }
+  def put(field$ : Int, value: Any): Unit = {
+    (field$ : @switch) match {
+      case 0 =>
+        this.id = value.toString
+          .asInstanceOf[String]
+      case 1 =>
+        this.rated = value
+          .asInstanceOf[Boolean]
+      case 2 =>
+        this.variant = value.toString
+          .asInstanceOf[String]
+      case 3 =>
+        this.speed = value.toString
+          .asInstanceOf[String]
+      case 4 =>
+        this.perf = value.toString
+          .asInstanceOf[String]
+      case 5 =>
+        this.createdAt = value
+          .asInstanceOf[Long]
+      case 6 =>
+        this.lastMoveAt = value
+          .asInstanceOf[Long]
+      case 7 =>
+        this.status = value.toString
+          .asInstanceOf[String]
+      case 8 =>
+        this.players = value
+          .asInstanceOf[GamePlayers]
+      case 9 =>
+        this.moves = value.toString
+          .asInstanceOf[String]
+      case 10 =>
+        this.clock = value
+          .asInstanceOf[GameClock]
+      case 11 =>
+        this.whiteScore = value
+          .asInstanceOf[Long]
+      case 12 =>
+        this.blackScore = value
+          .asInstanceOf[Long]
+      case 13 =>
+        this.fen = value.toString
+          .asInstanceOf[String]
+      case 14 =>
+        this.lastMove = value.toString
+          .asInstanceOf[String]
+      case _ => new org.apache.avro.AvroRuntimeException("Bad index")
+    }
+    ()
+  }
+  def getSchema: org.apache.avro.Schema = GameScore.SCHEMA$
+}
+
+object GameScore {
+  val SCHEMA$ = new org.apache.avro.Schema.Parser().parse(
+    "{\"type\":\"record\",\"name\":\"GameScore\",\"namespace\":\"yauza.avro.message.chess\",\"fields\":[{\"name\":\"id\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"rated\",\"type\":\"boolean\"},{\"name\":\"variant\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"speed\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"perf\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"createdAt\",\"type\":\"long\"},{\"name\":\"lastMoveAt\",\"type\":\"long\"},{\"name\":\"status\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"players\",\"type\":{\"type\":\"record\",\"name\":\"GamePlayers\",\"fields\":[{\"name\":\"white\",\"type\":{\"type\":\"record\",\"name\":\"GamePlayer\",\"fields\":[{\"name\":\"user\",\"type\":{\"type\":\"record\",\"name\":\"GameUser\",\"fields\":[{\"name\":\"name\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"id\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}}]}},{\"name\":\"rating\",\"type\":\"int\"},{\"name\":\"ratingDiff\",\"type\":[\"null\",\"int\"]}]}},{\"name\":\"black\",\"type\":\"GamePlayer\"}]}},{\"name\":\"moves\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"clock\",\"type\":{\"type\":\"record\",\"name\":\"GameClock\",\"fields\":[{\"name\":\"initial\",\"type\":\"int\"},{\"name\":\"increment\",\"type\":\"int\"},{\"name\":\"totalTime\",\"type\":\"int\"}]}},{\"name\":\"whiteScore\",\"type\":\"long\",\"default\":0},{\"name\":\"blackScore\",\"type\":\"long\",\"default\":0},{\"name\":\"fen\",\"type\":\"string\"},{\"name\":\"lastMove\",\"type\":\"string\"}]}"
+  )
+}

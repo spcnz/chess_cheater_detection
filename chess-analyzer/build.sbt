@@ -10,7 +10,14 @@ lazy val root = (project in file("."))
     name := "chess-analyzer",
     libraryDependencies ++= Dependencies.all,
     mainClass := Some("yauza.chess.Application"),
-    avroSchemas := Seq(
+    Docker / packageName := "specnazm/chess-analyzer",
+    Universal / mappings ++= Seq(
+      ((Compile / resourceDirectory).value / s"application.conf") -> "conf/application.conf"
+    ),
+    dockerUpdateLatest := true,
+    dockerBaseImage := "adoptopenjdk/openjdk11:alpine-slim",
+    bashScriptExtraDefines += """addJava "-Dconfig.file=${app_home}/../conf/application.conf"""",
+    Runtime / avroSchemas := Seq(
       Schema("yauza.avro.message.chess.Move"),
       Schema("yauza.avro.message.chess.GamePlayer"),
       Schema("yauza.avro.message.chess.GameUser"),
@@ -29,33 +36,12 @@ lazy val root = (project in file("."))
       Schema("yauza.avro.message.chess.GameWithMoveScore"),
       Schema("yauza.avro.message.chess.PlayerGameKpi")
     ),
-    Docker / packageName := "specnazm/chess-analyzer",
-    Universal / mappings ++= Seq(
-      ((Compile / resourceDirectory).value / s"application.conf") -> "conf/application.conf"
-    ),
-    dockerUpdateLatest := true,
-    dockerBaseImage := "adoptopenjdk/openjdk11:alpine-slim",
-    bashScriptExtraDefines += """addJava "-Dconfig.file=${app_home}/../conf/application.conf""""
+    Test / avroSchemas := Seq.empty,
+    scalacOptions ++= Seq(
+      "-unchecked",
+      "-deprecation"
+    )
   )
-  .settings(commonSettings)
-
-lazy val commonSettings = Seq(
-  credentials += Credentials(
-    "mymavenrepo.com.read",
-    "mymavenrepo.com",
-    sys.props("mymavenrepo.username"),
-    sys.props("mymavenrepo.password")
-  ),
-  resolvers ++= Seq(
-    "confluent" at "https://packages.confluent.io/maven/",
-    "mymavenrepo.com.read" at sys.props("mymavenrepo.url")
-  ),
-  avroSchemaRegistryUrl := sys.props("schema.registry.url"),
-  scalacOptions ++= Seq(
-    "-unchecked",
-    "-deprecation"
-  )
-)
 
 scalafmtOnCompile := true
 
