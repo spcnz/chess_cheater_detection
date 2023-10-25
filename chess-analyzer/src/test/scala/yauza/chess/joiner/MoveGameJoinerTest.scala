@@ -25,8 +25,8 @@ class MoveGameJoinerTest extends UnitTest with MoveGameJoiner {
       lastMoveAt = 1234567891L,
       status = "started",
       players = GamePlayers(
-        GamePlayer(GameUser("whiteName", "whiteId"), 1000),
-        GamePlayer(GameUser("blackName", "blackId"), 1900)
+        GamePlayer(GameUser("whiteName", "whiteId"), 1000, ratingDiff = Some(10)),
+        GamePlayer(GameUser("blackName", "blackId"), 1900, ratingDiff = Some(10))
       ),
       moves = "1. e4 e5 2. Nf3 Nc6",
       clock = GameClock(initial = 0, increment = 0, totalTime = 0)
@@ -43,8 +43,8 @@ class MoveGameJoinerTest extends UnitTest with MoveGameJoiner {
       lastMoveAt = 1234567891L,
       status = "started",
       players = GamePlayers(
-        GamePlayer(GameUser("whiteName", "whiteId"), 1000),
-        GamePlayer(GameUser("blackName", "blackId"), 1900)
+        GamePlayer(GameUser("whiteName", "whiteId"), 1000, ratingDiff = Some(10)),
+        GamePlayer(GameUser("blackName", "blackId"), 1900, ratingDiff = Some(10))
       ),
       moves = "1. e4 e5 2. Nf3 Nc6",
       clock = GameClock(initial = 0, increment = 0, totalTime = 0),
