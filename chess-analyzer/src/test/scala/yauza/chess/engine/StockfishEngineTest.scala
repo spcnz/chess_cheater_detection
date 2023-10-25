@@ -5,7 +5,7 @@ import yauza.chess.`enum`.{PlayerColor, ScoreType}
 
 class StockfishEngineTest extends UnitTest {
 
-  val engine = StockfishEngine(depth = 1, searchTimeMillis = 1000)
+  val engine: StockfishEngine = StockfishEngine(depth = 1, searchTimeMillis = 1000)
 
   behavior of "getPointOfView"
   it should "return color white as point of view" in {

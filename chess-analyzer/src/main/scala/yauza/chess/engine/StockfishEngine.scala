@@ -22,7 +22,8 @@ case class StockfishEngine(
   val mateScorePattern: Regex = (matePrefix + "[-+]?[0-9]+").r
 
   override def start(): Unit = {
-    process = Process(yauza.chess.config.chessAnalyzer.engine.path).run(
+//    process = Process(yauza.chess.config.chessAnalyzer.engine.path).run(
+    process = Process("stockfish").run(
       new ProcessIO(
         writeInput = (stdout: OutputStream) => inputStream = new OutputStreamWriter(stdout),
         processOutput = (stdin: InputStream) => outputStream = stdin,
