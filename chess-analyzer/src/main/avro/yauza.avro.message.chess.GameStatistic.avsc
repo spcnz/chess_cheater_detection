@@ -1,0 +1,1 @@
+{"type":"record","name":"GameStatistic","namespace":"yauza.avro.message.chess","fields":[{"name":"games","type":"long"},{"name":"rating","type":"long"},{"name":"rd","type":"long"},{"name":"prog","type":"long"},{"name":"prov","type":["null","boolean"],"default":null}]}
