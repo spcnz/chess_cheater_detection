@@ -14,8 +14,7 @@ case class GameScoreProcessor(gameScoreStoreName: String)
       PlayerMove
     ]
     with LazyLogging {
-  private var context: ProcessorContext[String, PlayerMove] = _
-  private var gameScoreStore: KeyValueStore[String, GameScore] = _
+
   private val moveLabels: Map[Range, MoveLabel] = Map(
     Range.inclusive(-Int.MaxValue, -200) -> MoveLabel.Blunder,
     Range.inclusive(-199, -100) -> MoveLabel.Mistake,
@@ -26,6 +25,8 @@ case class GameScoreProcessor(gameScoreStoreName: String)
     Range.inclusive(100, 199) -> MoveLabel.Excellent,
     Range.inclusive(200, Int.MaxValue) -> MoveLabel.Brilliant
   )
+  private var context: ProcessorContext[String, PlayerMove] = _
+  private var gameScoreStore: KeyValueStore[String, GameScore] = _
 
   override def init(processorContext: ProcessorContext[String, PlayerMove]): Unit = {
     context = processorContext
@@ -103,7 +104,7 @@ case class GameScoreProcessor(gameScoreStoreName: String)
       )
     }
 
-  private def initialGameScore(gameWithMoveScore: GameWithMoveScore): GameScore =
+  def initialGameScore(gameWithMoveScore: GameWithMoveScore): GameScore =
     GameScore(
       id = gameWithMoveScore.id,
       whiteScore = 0,

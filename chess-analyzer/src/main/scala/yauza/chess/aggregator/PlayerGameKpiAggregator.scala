@@ -10,35 +10,34 @@ trait PlayerGameKpiAggregator {
       username = playerMove.username,
       gameId = playerMove.gameId,
       brilliantMoveCounter =
-        Some(updatedCounter(playerMove.label, kpi.brilliantMoveCounter, MoveLabel.Brilliant)),
+        Some(incrementCount(playerMove.label, kpi.brilliantMoveCounter, MoveLabel.Brilliant)),
       excellentMoveCounter = Some(
-        updatedCounter(playerMove.label, kpi.excellentMoveCounter, MoveLabel.Excellent)
+        incrementCount(playerMove.label, kpi.excellentMoveCounter, MoveLabel.Excellent)
       ),
-      goodMoveCounter = Some(updatedCounter(playerMove.label, kpi.goodMoveCounter, MoveLabel.Good)),
+      goodMoveCounter = Some(incrementCount(playerMove.label, kpi.goodMoveCounter, MoveLabel.Good)),
       inaccuracyMoveCounter = Some(
-        updatedCounter(playerMove.label, kpi.inaccuracyMoveCounter, MoveLabel.Inaccuracy)
+        incrementCount(playerMove.label, kpi.inaccuracyMoveCounter, MoveLabel.Inaccuracy)
       ),
       mistakeMoveCounter = Some(
-        updatedCounter(playerMove.label, kpi.mistakeMoveCounter, MoveLabel.Mistake)
+        incrementCount(playerMove.label, kpi.mistakeMoveCounter, MoveLabel.Mistake)
       ),
       blunderMoveCounter = Some(
-        updatedCounter(playerMove.label, kpi.blunderMoveCounter, MoveLabel.Blunder)
+        incrementCount(playerMove.label, kpi.blunderMoveCounter, MoveLabel.Blunder)
       )
     )
-    // ovde videti sta cu ako je nula imenliac
     newKpi.accuracy = Some(calcAccuracy(newKpi))
 
     newKpi
   }
 
-  private def updatedCounter(
+  protected def incrementCount(
       moveLabel: MoveLabel,
-      counter: Option[Long],
+      counterValue: Option[Long],
       counterLabel: MoveLabel
   ): Long =
-    counter.getOrElse(0L) + (if (moveLabel == counterLabel) 1 else 0)
+    counterValue.getOrElse(0L) + (if (moveLabel == counterLabel) 1 else 0)
 
-  private def calcAccuracy(kpi: PlayerGameKpi): Double =
+  protected def calcAccuracy(kpi: PlayerGameKpi): Double =
     Seq(
       kpi.brilliantMoveCounter,
       kpi.goodMoveCounter,
@@ -52,8 +51,8 @@ trait PlayerGameKpiAggregator {
       kpi.blunderMoveCounter
     ).map(_.getOrElse(0L)).sum.toDouble
 
-  def merge(key: String, previousKpi: PlayerGameKpi, newKpi: PlayerGameKpi): PlayerGameKpi =
-    PlayerGameKpi(
+  def merge(key: String, previousKpi: PlayerGameKpi, newKpi: PlayerGameKpi): PlayerGameKpi = {
+    val mergedKpi = PlayerGameKpi(
       id = newKpi.id,
       username = newKpi.username,
       gameId = newKpi.gameId,
@@ -80,8 +79,9 @@ trait PlayerGameKpiAggregator {
       blunderMoveCounter = Some(
         previousKpi.blunderMoveCounter.getOrElse(0L) + newKpi.blunderMoveCounter
           .getOrElse(0L)
-      ),
-      accuracy = newKpi.accuracy
+      )
     )
-
+    mergedKpi.accuracy = Some(calcAccuracy(mergedKpi))
+    mergedKpi
+  }
 }

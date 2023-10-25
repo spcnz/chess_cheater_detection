@@ -10,11 +10,7 @@ import java.util.Properties
 import scala.reflect.io.Path
 
 class ChessAnalyzerTopologyTest extends TopologyTest with Serdes with GivenWhenThen {
-
-//  var processorContext: MockProcessorContext[String, PlayerMove] = _
-//  var processor: GameScoreProcessor = _
-//
-//  var gameScoreStore: KeyValueStore[String, GameScore] = _
+  
   var movesInputTopic: TestInputTopic[String, Move] = _
   var gamesInputTopic: TestInputTopic[String, Game] = _
   var moveScoreOutputTopic: TestOutputTopic[String, PlayerMove] = _
@@ -25,25 +21,6 @@ class ChessAnalyzerTopologyTest extends TopologyTest with Serdes with GivenWhenT
   override def stateDir: Option[Path] = Some(config.stateDir / config.applicationId)
 
   override def topology: Topology = TopologyBuilder(new MockStockfishEngine()).build
-
-//  override def beforeEach(): Unit = {
-//    processorContext = new MockProcessorContext()
-//
-//    gameScoreStore = Stores
-//      .keyValueStoreBuilder(
-//        Stores.inMemoryKeyValueStore(config.chessAnalyzer.store.gameScore),
-//        stringSerde,
-//        gameScoreSerde
-//      )
-//      .withLoggingDisabled // Logging must be disabled with MockProcessorContext.
-//      .build
-//
-//    gameScoreStore.init(processorContext.getStateStoreContext, gameScoreStore)
-//    processorContext.getStateStoreContext.register(gameScoreStore, (_, _) => {})
-//processor = GameScoreProcessor(config.chessAnalyzer.store.gameScore)
-  //    processor.init(processorContext)
-//    super.beforeEach()
-//  }
 
   def publishMoveEvent(
       gameId: String,
