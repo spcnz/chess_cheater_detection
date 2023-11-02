@@ -1,8 +1,8 @@
 package yauza.chess
 
-import gaia.streams.common.AvroSupport
 import org.apache.kafka.common.serialization.Serde
 import yauza.avro.message.chess._
+import yauza.chess.util.AvroSupport
 
 trait Serdes extends AvroSupport {
   implicit val gameSerde: Serde[Game] = avroSerde()

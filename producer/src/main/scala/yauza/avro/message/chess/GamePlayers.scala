@@ -33,6 +33,6 @@ final case class GamePlayers(var white: GamePlayer, var black: GamePlayer)
 
 object GamePlayers {
   val SCHEMA$ = new org.apache.avro.Schema.Parser().parse(
-    "{\"type\":\"record\",\"name\":\"GamePlayers\",\"namespace\":\"yauza.avro.message.chess\",\"fields\":[{\"name\":\"white\",\"type\":{\"type\":\"record\",\"name\":\"GamePlayer\",\"fields\":[{\"name\":\"user\",\"type\":{\"type\":\"record\",\"name\":\"GameUser\",\"fields\":[{\"name\":\"name\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"id\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}}]}},{\"name\":\"rating\",\"type\":\"int\"}]}},{\"name\":\"black\",\"type\":\"GamePlayer\"}]}"
+    "{\"type\":\"record\",\"name\":\"GamePlayers\",\"namespace\":\"yauza.avro.message.chess\",\"fields\":[{\"name\":\"white\",\"type\":{\"type\":\"record\",\"name\":\"GamePlayer\",\"fields\":[{\"name\":\"user\",\"type\":{\"type\":\"record\",\"name\":\"GameUser\",\"fields\":[{\"name\":\"name\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"id\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}}]}},{\"name\":\"rating\",\"type\":\"int\"},{\"name\":\"ratingDiff\",\"type\":[\"null\",\"int\"]}]}},{\"name\":\"black\",\"type\":\"GamePlayer\"}]}"
   )
 }

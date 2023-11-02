@@ -1,6 +1,5 @@
 package yauza.chess
 
-import gaia.streams.common.{KafkaConfig, StreamConfig}
 import pureconfig._
 import pureconfig.generic.auto._
 

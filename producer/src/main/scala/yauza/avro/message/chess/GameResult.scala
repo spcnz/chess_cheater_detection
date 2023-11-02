@@ -19,7 +19,8 @@ final case class GameResult(
     var winner: String,
     var lastMove: String,
     var check: Option[String],
-    var rematch: Option[String]
+    var rematch: Option[String],
+    var players: GamePlayers
 ) extends org.apache.avro.specific.SpecificRecordBase {
   def this() = this(
     "",
@@ -37,7 +38,8 @@ final case class GameResult(
     "",
     "",
     None,
-    None
+    None,
+    new GamePlayers
   )
   def get(field$ : Int): AnyRef =
     (field$ : @switch) match {
@@ -101,6 +103,9 @@ final case class GameResult(
             case None    => null
           }
         }.asInstanceOf[AnyRef]
+      case 16 =>
+        players
+          .asInstanceOf[AnyRef]
       case _ => new org.apache.avro.AvroRuntimeException("Bad index")
     }
   def put(field$ : Int, value: Any): Unit = {
@@ -165,6 +170,9 @@ final case class GameResult(
             case _    => Some(value.toString)
           }
         }.asInstanceOf[Option[String]]
+      case 16 =>
+        this.players = value
+          .asInstanceOf[GamePlayers]
       case _ => new org.apache.avro.AvroRuntimeException("Bad index")
     }
     ()
@@ -174,6 +182,6 @@ final case class GameResult(
 
 object GameResult {
   val SCHEMA$ = new org.apache.avro.Schema.Parser().parse(
-    "{\"type\":\"record\",\"name\":\"GameResult\",\"namespace\":\"yauza.avro.message.chess\",\"fields\":[{\"name\":\"id\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"variant\",\"type\":{\"type\":\"record\",\"name\":\"GameResultVariant\",\"fields\":[{\"name\":\"key\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"name\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"short\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}}]}},{\"name\":\"speed\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"perf\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"rated\",\"type\":\"boolean\"},{\"name\":\"fen\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"player\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"turns\",\"type\":\"long\"},{\"name\":\"startedAtTurn\",\"type\":[\"null\",\"long\"]},{\"name\":\"source\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"status\",\"type\":{\"type\":\"record\",\"name\":\"GameResultStatus\",\"fields\":[{\"name\":\"id\",\"type\":\"long\"},{\"name\":\"name\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}}]}},{\"name\":\"createdAt\",\"type\":\"long\"},{\"name\":\"winner\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"lastMove\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"check\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}]},{\"name\":\"rematch\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}]}]}"
+    "{\"type\":\"record\",\"name\":\"GameResult\",\"namespace\":\"yauza.avro.message.chess\",\"fields\":[{\"name\":\"id\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"variant\",\"type\":{\"type\":\"record\",\"name\":\"GameResultVariant\",\"fields\":[{\"name\":\"key\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"name\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"short\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}}]}},{\"name\":\"speed\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"perf\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"rated\",\"type\":\"boolean\"},{\"name\":\"fen\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"player\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"turns\",\"type\":\"long\"},{\"name\":\"startedAtTurn\",\"type\":[\"null\",\"long\"]},{\"name\":\"source\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"status\",\"type\":{\"type\":\"record\",\"name\":\"GameResultStatus\",\"fields\":[{\"name\":\"id\",\"type\":\"long\"},{\"name\":\"name\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}}]}},{\"name\":\"createdAt\",\"type\":\"long\"},{\"name\":\"winner\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"lastMove\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"check\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}]},{\"name\":\"rematch\",\"type\":[\"null\",{\"type\":\"string\",\"avro.java.string\":\"String\"}]},{\"name\":\"players\",\"type\":{\"type\":\"record\",\"name\":\"GamePlayers\",\"fields\":[{\"name\":\"white\",\"type\":{\"type\":\"record\",\"name\":\"GamePlayer\",\"fields\":[{\"name\":\"user\",\"type\":{\"type\":\"record\",\"name\":\"GameUser\",\"fields\":[{\"name\":\"name\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"id\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}}]}},{\"name\":\"rating\",\"type\":\"int\"},{\"name\":\"ratingDiff\",\"type\":[\"null\",\"int\"]}]}},{\"name\":\"black\",\"type\":\"GamePlayer\"}]}}]}"
   )
 }
