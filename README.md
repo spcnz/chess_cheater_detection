@@ -27,7 +27,7 @@ perf: user’s performance for each game variant (e.g. blitz, bullet..)
    - Win rate
    - Number of total correct/incorrect moves - Use the Stockfish chess engine to determine the number of correct and incorrect moves the player makes
    - Mean player accuracy
-   - Micro - Total number of correct moves / total number of incorrect moves
+   - Correct Incorrect moves ratio - Total number of correct moves / total number of incorrect moves
    - Macro - Calculate accuracy per game and then take the average of all accuracies
    - Median player accuracy - Calculate accuracy per game and then take the value at the 50th percentile
    - Standard deviation of accuracy
