@@ -150,7 +150,8 @@ case class TopologyBuilder(chessEngine: Engine)(implicit config: Config)
     playerKpi
       .filter((_, kpi) =>
         kpi.accuracies.count(gameAcc =>
-          gameAcc._2 > (kpi.meanPlayerAccuracy.getOrElse(0) + 2 * kpi.accuracySTD)
+          gameAcc._2 > (kpi.meanPlayerAccuracy
+            .getOrElse(0.0) + 2.0 * kpi.accuracySTD.getOrElse(0.0))
         ) >= 3
       )
       .to(config.chessAnalyzer.topic.sink.suspiciousPlayer)
