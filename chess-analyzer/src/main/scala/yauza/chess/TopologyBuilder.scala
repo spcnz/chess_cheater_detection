@@ -134,7 +134,7 @@ case class TopologyBuilder(chessEngine: Engine)(implicit config: Config)
             .`with`(config.chessAnalyzer.topic.sink.gameKpi)
         )
 
-    gameKpiStream
+    val playerKpi: KStream[String, PlayerKpi] = gameKpiStream
       .toTable(Named.as("game-kpi-table"))
       .leftJoin(gameResultTable)(joinGameKpiWithGameResult)
       .toStream(Named.as("game-kpi-with-result"))
@@ -143,7 +143,17 @@ case class TopologyBuilder(chessEngine: Engine)(implicit config: Config)
         config.chessAnalyzer.store.playerKpi
       )
       .selectKey((_, value) => value.id)
+
+    playerKpi
       .to(config.chessAnalyzer.topic.sink.playerKpi)
+
+    playerKpi
+      .filter((_, kpi) =>
+        kpi.accuracies.count(gameAcc =>
+          gameAcc._2 > (kpi.meanPlayerAccuracy.getOrElse(0) + 2 * kpi.accuracySTD)
+        ) >= 3
+      )
+      .to(config.chessAnalyzer.topic.sink.suspiciousPlayer)
 
     builder.build()
   }
