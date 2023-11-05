@@ -3,7 +3,7 @@ package yauza.chess.processor
 import com.typesafe.scalalogging.LazyLogging
 import org.apache.kafka.streams.processor.api.{Processor, ProcessorContext, Record}
 import org.apache.kafka.streams.state.{TimestampedKeyValueStore, ValueAndTimestamp}
-import yauza.avro.message.chess.{GameKpi, PlayerKpi, count}
+import yauza.avro.message.chess.{count, GameKpi, PlayerKpi}
 
 import java.time.Instant
 

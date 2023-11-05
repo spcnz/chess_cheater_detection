@@ -19,8 +19,7 @@ lazy val root = (project in file("."))
     scalacOptions ++= Seq(
       "-unchecked",
       "-deprecation"
-    ),
-    Test / parallelExecution := false
+    )
   )
 
 scalafmtOnCompile := true
