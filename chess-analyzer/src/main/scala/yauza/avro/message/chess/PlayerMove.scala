@@ -9,9 +9,10 @@ final case class PlayerMove(
     var gameId: String,
     var lastMove: String,
     var label: MoveLabel,
-    var score: Long = 0L
+    var score: Long = 0L,
+    var gameStatus: String = "started"
 ) extends org.apache.avro.specific.SpecificRecordBase {
-  def this() = this("", "", "", "", null, 0L)
+  def this() = this("", "", "", "", null, 0L, "started")
   def get(field$ : Int): AnyRef =
     (field$ : @switch) match {
       case 0 =>
@@ -31,6 +32,9 @@ final case class PlayerMove(
           .asInstanceOf[AnyRef]
       case 5 =>
         score
+          .asInstanceOf[AnyRef]
+      case 6 =>
+        gameStatus
           .asInstanceOf[AnyRef]
       case _ => new org.apache.avro.AvroRuntimeException("Bad index")
     }
@@ -54,6 +58,9 @@ final case class PlayerMove(
       case 5 =>
         this.score = value
           .asInstanceOf[Long]
+      case 6 =>
+        this.gameStatus = value.toString
+          .asInstanceOf[String]
       case _ => new org.apache.avro.AvroRuntimeException("Bad index")
     }
     ()
@@ -63,6 +70,6 @@ final case class PlayerMove(
 
 object PlayerMove {
   val SCHEMA$ = new org.apache.avro.Schema.Parser().parse(
-    "{\"type\":\"record\",\"name\":\"PlayerMove\",\"namespace\":\"yauza.avro.message.chess\",\"fields\":[{\"name\":\"id\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"username\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"gameId\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"lastMove\",\"type\":\"string\"},{\"name\":\"label\",\"type\":{\"type\":\"enum\",\"name\":\"MoveLabel\",\"symbols\":[\"Blunder\",\"Mistake\",\"Inaccuracy\",\"Neutral\",\"Good\",\"Excellent\",\"Brilliant\"]}},{\"name\":\"score\",\"type\":\"long\",\"default\":0}]}"
+    "{\"type\":\"record\",\"name\":\"PlayerMove\",\"namespace\":\"yauza.avro.message.chess\",\"fields\":[{\"name\":\"id\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"username\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"gameId\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"lastMove\",\"type\":\"string\"},{\"name\":\"label\",\"type\":{\"type\":\"enum\",\"name\":\"MoveLabel\",\"symbols\":[\"Blunder\",\"Mistake\",\"Inaccuracy\",\"Neutral\",\"Good\",\"Excellent\",\"Brilliant\"]}},{\"name\":\"score\",\"type\":\"long\",\"default\":0},{\"name\":\"gameStatus\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"default\":\"started\"}]}"
   )
 }

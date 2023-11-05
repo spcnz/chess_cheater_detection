@@ -3,10 +3,13 @@ package yauza.avro.message.chess
 
 import scala.annotation.switch
 
-final case class PlayerGameKpi(
+final case class GameKpi(
     var id: String,
     var username: String,
     var gameId: String,
+    var gameStatus: String = "started",
+    var rated: Option[Boolean] = None,
+    var winner: Option[String] = None,
     var brilliantMoveCounter: Option[Long] = None,
     var excellentMoveCounter: Option[Long] = None,
     var goodMoveCounter: Option[Long] = None,
@@ -15,7 +18,7 @@ final case class PlayerGameKpi(
     var blunderMoveCounter: Option[Long] = None,
     var accuracy: Option[Double] = None
 ) extends org.apache.avro.specific.SpecificRecordBase {
-  def this() = this("", "", "", None, None, None, None, None, None, None)
+  def this() = this("", "", "", "started", None, None, None, None, None, None, None, None, None)
   def get(field$ : Int): AnyRef =
     (field$ : @switch) match {
       case 0 =>
@@ -28,48 +31,65 @@ final case class PlayerGameKpi(
         gameId
           .asInstanceOf[AnyRef]
       case 3 =>
-        {
-          brilliantMoveCounter match {
-            case Some(x) => x
-            case None    => null
-          }
-        }.asInstanceOf[AnyRef]
+        gameStatus
+          .asInstanceOf[AnyRef]
       case 4 =>
         {
-          excellentMoveCounter match {
+          rated match {
             case Some(x) => x
             case None    => null
           }
         }.asInstanceOf[AnyRef]
       case 5 =>
         {
-          goodMoveCounter match {
+          winner match {
             case Some(x) => x
             case None    => null
           }
         }.asInstanceOf[AnyRef]
       case 6 =>
         {
-          inaccuracyMoveCounter match {
+          brilliantMoveCounter match {
             case Some(x) => x
             case None    => null
           }
         }.asInstanceOf[AnyRef]
       case 7 =>
         {
-          mistakeMoveCounter match {
+          excellentMoveCounter match {
             case Some(x) => x
             case None    => null
           }
         }.asInstanceOf[AnyRef]
       case 8 =>
         {
-          blunderMoveCounter match {
+          goodMoveCounter match {
             case Some(x) => x
             case None    => null
           }
         }.asInstanceOf[AnyRef]
       case 9 =>
+        {
+          inaccuracyMoveCounter match {
+            case Some(x) => x
+            case None    => null
+          }
+        }.asInstanceOf[AnyRef]
+      case 10 =>
+        {
+          mistakeMoveCounter match {
+            case Some(x) => x
+            case None    => null
+          }
+        }.asInstanceOf[AnyRef]
+      case 11 =>
+        {
+          blunderMoveCounter match {
+            case Some(x) => x
+            case None    => null
+          }
+        }.asInstanceOf[AnyRef]
+      case 12 =>
         {
           accuracy match {
             case Some(x) => x
@@ -90,48 +110,65 @@ final case class PlayerGameKpi(
         this.gameId = value.toString
           .asInstanceOf[String]
       case 3 =>
+        this.gameStatus = value.toString
+          .asInstanceOf[String]
+      case 4 =>
+        this.rated = {
+          value match {
+            case null => None
+            case _    => Some(value)
+          }
+        }.asInstanceOf[Option[Boolean]]
+      case 5 =>
+        this.winner = {
+          value match {
+            case null => None
+            case _    => Some(value.toString)
+          }
+        }.asInstanceOf[Option[String]]
+      case 6 =>
         this.brilliantMoveCounter = {
           value match {
             case null => None
             case _    => Some(value)
           }
         }.asInstanceOf[Option[Long]]
-      case 4 =>
+      case 7 =>
         this.excellentMoveCounter = {
           value match {
             case null => None
             case _    => Some(value)
           }
         }.asInstanceOf[Option[Long]]
-      case 5 =>
+      case 8 =>
         this.goodMoveCounter = {
           value match {
             case null => None
             case _    => Some(value)
           }
         }.asInstanceOf[Option[Long]]
-      case 6 =>
+      case 9 =>
         this.inaccuracyMoveCounter = {
           value match {
             case null => None
             case _    => Some(value)
           }
         }.asInstanceOf[Option[Long]]
-      case 7 =>
+      case 10 =>
         this.mistakeMoveCounter = {
           value match {
             case null => None
             case _    => Some(value)
           }
         }.asInstanceOf[Option[Long]]
-      case 8 =>
+      case 11 =>
         this.blunderMoveCounter = {
           value match {
             case null => None
             case _    => Some(value)
           }
         }.asInstanceOf[Option[Long]]
-      case 9 =>
+      case 12 =>
         this.accuracy = {
           value match {
             case null => None
@@ -142,11 +179,11 @@ final case class PlayerGameKpi(
     }
     ()
   }
-  def getSchema: org.apache.avro.Schema = PlayerGameKpi.SCHEMA$
+  def getSchema: org.apache.avro.Schema = GameKpi.SCHEMA$
 }
 
-object PlayerGameKpi {
+object GameKpi {
   val SCHEMA$ = new org.apache.avro.Schema.Parser().parse(
-    "{\"type\":\"record\",\"name\":\"PlayerGameKpi\",\"namespace\":\"yauza.avro.message.chess\",\"fields\":[{\"name\":\"id\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"username\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"gameId\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"brilliantMoveCounter\",\"type\":[\"null\",\"long\"],\"default\":null},{\"name\":\"excellentMoveCounter\",\"type\":[\"null\",\"long\"],\"default\":null},{\"name\":\"goodMoveCounter\",\"type\":[\"null\",\"long\"],\"default\":null},{\"name\":\"inaccuracyMoveCounter\",\"type\":[\"null\",\"long\"],\"default\":null},{\"name\":\"mistakeMoveCounter\",\"type\":[\"null\",\"long\"],\"default\":null},{\"name\":\"blunderMoveCounter\",\"type\":[\"null\",\"long\"],\"default\":null},{\"name\":\"accuracy\",\"type\":[\"null\",\"double\"],\"default\":null}]}"
+    "{\"type\":\"record\",\"name\":\"GameKpi\",\"namespace\":\"yauza.avro.message.chess\",\"fields\":[{\"name\":\"id\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"username\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"gameId\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"}},{\"name\":\"gameStatus\",\"type\":{\"type\":\"string\",\"avro.java.string\":\"String\"},\"default\":\"started\"},{\"name\":\"rated\",\"type\":[\"null\",\"boolean\"],\"default\":null},{\"name\":\"winner\",\"type\":[\"null\",\"string\"],\"default\":null},{\"name\":\"brilliantMoveCounter\",\"type\":[\"null\",\"long\"],\"default\":null},{\"name\":\"excellentMoveCounter\",\"type\":[\"null\",\"long\"],\"default\":null},{\"name\":\"goodMoveCounter\",\"type\":[\"null\",\"long\"],\"default\":null},{\"name\":\"inaccuracyMoveCounter\",\"type\":[\"null\",\"long\"],\"default\":null},{\"name\":\"mistakeMoveCounter\",\"type\":[\"null\",\"long\"],\"default\":null},{\"name\":\"blunderMoveCounter\",\"type\":[\"null\",\"long\"],\"default\":null},{\"name\":\"accuracy\",\"type\":[\"null\",\"double\"],\"default\":null}]}"
   )
 }

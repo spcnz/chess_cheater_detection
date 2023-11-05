@@ -48,6 +48,14 @@
             "name": "score",
             "type": "long",
             "default": 0
+        },
+        {
+            "name": "gameStatus",
+            "type": {
+                "type": "string",
+                "avro.java.string": "String"
+            },
+            "default": "started"
         }
     ]
 }

@@ -4,7 +4,7 @@ import pureconfig._
 import pureconfig.generic.auto._
 
 case class SinkTopicConfig(
-    playerGameKpi: String,
+    gameKpi: String,
     playerKpi: String,
     playerMoveScore: String,
     suspiciousPlayer: String
@@ -24,6 +24,7 @@ case class TopicConfig(
 case class StoreConfig(
     game: String,
     gameScore: String,
+    playerKpi: String,
     uniqueUpdates: String
 )
 

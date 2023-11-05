@@ -1,14 +1,15 @@
 package yauza.chess.aggregator
 
-import yauza.avro.message.chess.{MoveLabel, PlayerGameKpi, PlayerMove}
+import yauza.avro.message.chess.{GameKpi, MoveLabel, PlayerMove}
 
-trait PlayerGameKpiAggregator {
+trait GameKpiAggregator {
 
-  def aggregate(key: String, playerMove: PlayerMove, kpi: PlayerGameKpi): PlayerGameKpi = {
-    val newKpi = PlayerGameKpi(
+  def aggregate(key: String, playerMove: PlayerMove, kpi: GameKpi): GameKpi = {
+    val newKpi = GameKpi(
       id = playerMove.id,
       username = playerMove.username,
       gameId = playerMove.gameId,
+      gameStatus = playerMove.gameStatus,
       brilliantMoveCounter =
         Some(incrementCount(playerMove.label, kpi.brilliantMoveCounter, MoveLabel.Brilliant)),
       excellentMoveCounter = Some(
@@ -37,25 +38,12 @@ trait PlayerGameKpiAggregator {
   ): Long =
     counterValue.getOrElse(0L) + (if (moveLabel == counterLabel) 1 else 0)
 
-  protected def calcAccuracy(kpi: PlayerGameKpi): Double =
-    Seq(
-      kpi.brilliantMoveCounter,
-      kpi.goodMoveCounter,
-      kpi.excellentMoveCounter
-    ).map(_.getOrElse(0L)).sum.toDouble / Seq(
-      kpi.brilliantMoveCounter,
-      kpi.goodMoveCounter,
-      kpi.excellentMoveCounter,
-      kpi.inaccuracyMoveCounter,
-      kpi.mistakeMoveCounter,
-      kpi.blunderMoveCounter
-    ).map(_.getOrElse(0L)).sum.toDouble
-
-  def merge(key: String, previousKpi: PlayerGameKpi, newKpi: PlayerGameKpi): PlayerGameKpi = {
-    val mergedKpi = PlayerGameKpi(
+  def merge(key: String, previousKpi: GameKpi, newKpi: GameKpi): GameKpi = {
+    val mergedKpi = GameKpi(
       id = newKpi.id,
       username = newKpi.username,
       gameId = newKpi.gameId,
+      gameStatus = newKpi.gameStatus,
       brilliantMoveCounter = Some(
         previousKpi.brilliantMoveCounter.getOrElse(0L) + newKpi.brilliantMoveCounter
           .getOrElse(0L)
@@ -84,4 +72,18 @@ trait PlayerGameKpiAggregator {
     mergedKpi.accuracy = Some(calcAccuracy(mergedKpi))
     mergedKpi
   }
+
+  protected def calcAccuracy(kpi: GameKpi): Double =
+    Seq(
+      kpi.brilliantMoveCounter,
+      kpi.goodMoveCounter,
+      kpi.excellentMoveCounter
+    ).map(_.getOrElse(0L)).sum.toDouble / Seq(
+      kpi.brilliantMoveCounter,
+      kpi.goodMoveCounter,
+      kpi.excellentMoveCounter,
+      kpi.inaccuracyMoveCounter,
+      kpi.mistakeMoveCounter,
+      kpi.blunderMoveCounter
+    ).map(_.getOrElse(0L)).sum.toDouble
 }

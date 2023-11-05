@@ -1,16 +1,17 @@
 package yauza.chess.aggregator
 
-import yauza.avro.message.chess.{MoveLabel, PlayerGameKpi, PlayerMove}
+import yauza.avro.message.chess.{GameKpi, MoveLabel, PlayerMove}
 import yauza.chess.UnitTest
 
-class PlayerGameKpiAggregatorTest extends UnitTest with PlayerGameKpiAggregator {
+class GameKpiAggregatorTest extends UnitTest with GameKpiAggregator {
 
   behavior of "aggregate"
   it should "update existing KPI aggregations when new move arrives" in {
-    val kpi = PlayerGameKpi(
+    val kpi = GameKpi(
       id = "1",
       username = "1",
       gameId = "1",
+      gameStatus = "started",
       brilliantMoveCounter = Some(0L),
       excellentMoveCounter = Some(0L),
       goodMoveCounter = Some(3L),
@@ -24,14 +25,16 @@ class PlayerGameKpiAggregatorTest extends UnitTest with PlayerGameKpiAggregator 
       gameId = "1",
       label = MoveLabel.Good,
       score = 200,
-      lastMove = "a2a4"
+      lastMove = "a2a4",
+      gameStatus = "timeout"
     )
 
     aggregate("1", move, kpi) should be(
-      PlayerGameKpi(
+      GameKpi(
         id = "1",
         username = "1",
         gameId = "1",
+        gameStatus = "timeout",
         brilliantMoveCounter = Some(0L),
         excellentMoveCounter = Some(0L),
         goodMoveCounter = Some(4L),
@@ -61,7 +64,7 @@ class PlayerGameKpiAggregatorTest extends UnitTest with PlayerGameKpiAggregator 
 
   behavior of "calcAccuracy"
   it should "return ratio of good and bad moves" in {
-    val kpi = PlayerGameKpi(
+    val kpi = GameKpi(
       id = "1",
       username = "1",
       gameId = "1",
@@ -76,7 +79,7 @@ class PlayerGameKpiAggregatorTest extends UnitTest with PlayerGameKpiAggregator 
     calcAccuracy(kpi) should be(0.25)
   }
   it should "handle division by zero" in {
-    val kpi = PlayerGameKpi(
+    val kpi = GameKpi(
       id = "1",
       username = "1",
       gameId = "1",
@@ -93,10 +96,11 @@ class PlayerGameKpiAggregatorTest extends UnitTest with PlayerGameKpiAggregator 
 
   behavior of "merge"
   it should "merge two KPI when session window is merging" in {
-    val kpiFirstSession = PlayerGameKpi(
+    val kpiFirstSession = GameKpi(
       id = "1",
       username = "1",
       gameId = "1",
+      gameStatus = "started",
       brilliantMoveCounter = Some(0L),
       excellentMoveCounter = Some(0L),
       goodMoveCounter = Some(3L),
@@ -105,10 +109,11 @@ class PlayerGameKpiAggregatorTest extends UnitTest with PlayerGameKpiAggregator 
       blunderMoveCounter = Some(0L)
     )
 
-    val kpiSecondSession = PlayerGameKpi(
+    val kpiSecondSession = GameKpi(
       id = "1",
       username = "1",
       gameId = "1",
+      gameStatus = "resign",
       brilliantMoveCounter = Some(1L),
       excellentMoveCounter = Some(0L),
       goodMoveCounter = Some(3L),
@@ -118,10 +123,11 @@ class PlayerGameKpiAggregatorTest extends UnitTest with PlayerGameKpiAggregator 
     )
 
     merge("1", kpiFirstSession, kpiSecondSession) should be(
-      PlayerGameKpi(
+      GameKpi(
         id = "1",
         username = "1",
         gameId = "1",
+        gameStatus = "resign",
         brilliantMoveCounter = Some(1L),
         excellentMoveCounter = Some(0L),
         goodMoveCounter = Some(6L),

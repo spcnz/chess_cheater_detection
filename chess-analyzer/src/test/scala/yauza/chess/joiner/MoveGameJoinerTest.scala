@@ -32,7 +32,7 @@ class MoveGameJoinerTest extends UnitTest with MoveGameJoiner {
       clock = GameClock(initial = 0, increment = 0, totalTime = 0)
     )
 
-    val result = joinMoveWithGame(move, game)
+    val actual = joinMoveWithGame(move, game)
     val expected = GameWithMoveScore(
       id = "100",
       rated = true,
@@ -56,7 +56,6 @@ class MoveGameJoinerTest extends UnitTest with MoveGameJoiner {
       scoreType = "CENTIPAWN"
     )
 
-    result shouldEqual expected
+    actual shouldEqual expected
   }
-
 }

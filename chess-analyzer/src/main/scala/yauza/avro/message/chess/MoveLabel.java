@@ -9,7 +9,5 @@ public enum MoveLabel implements org.apache.avro.generic.GenericEnumSymbol<MoveL
   Blunder, Mistake, Inaccuracy, Neutral, Good, Excellent, Brilliant  ;
   public static final org.apache.avro.Schema SCHEMA$ = new org.apache.avro.Schema.Parser().parse("{\"type\":\"enum\",\"name\":\"MoveLabel\",\"namespace\":\"yauza.avro.message.chess\",\"symbols\":[\"Blunder\",\"Mistake\",\"Inaccuracy\",\"Neutral\",\"Good\",\"Excellent\",\"Brilliant\"]}");
   public static org.apache.avro.Schema getClassSchema() { return SCHEMA$; }
-
-  @Override
   public org.apache.avro.Schema getSchema() { return SCHEMA$; }
 }

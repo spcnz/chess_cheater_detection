@@ -98,6 +98,7 @@ class GameScoreProcessorTest
     forwarded.get(0).record().value().score should be(100)
     forwarded.get(0).record().value().lastMove should be("CHANGED")
     forwarded.get(0).record().value().label should be(MoveLabel.Excellent)
+    forwarded.get(0).record().value().gameStatus should be("started")
   }
   it should "update game score and forward it to downstream" in {
     Given("There is previous score in state store")

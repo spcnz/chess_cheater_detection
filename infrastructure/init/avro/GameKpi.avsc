@@ -1,6 +1,6 @@
 {
     "type": "record",
-    "name": "PlayerGameKpi",
+    "name": "GameKpi",
     "namespace": "yauza.avro.message.chess",
     "fields": [
         {
@@ -23,6 +23,30 @@
                 "type": "string",
                 "avro.java.string": "String"
             }
+        },
+        {
+            "name": "gameStatus",
+            "type": {
+                "type": "string",
+                "avro.java.string": "String"
+            },
+            "default": "started"
+        },
+        {
+            "name": "rated",
+            "type": [
+                "null",
+                "boolean"
+            ],
+            "default": null
+        },
+        {
+            "name": "winner",
+            "type": [
+                "null",
+                "string"
+            ],
+            "default": null
         },
         {
             "name": "brilliantMoveCounter",

@@ -6,6 +6,7 @@ import yauza.chess.util.AvroSupport
 
 trait Serdes extends AvroSupport {
   implicit val gameSerde: Serde[Game] = avroSerde()
+  implicit val gameResult: Serde[GameResult] = avroSerde()
   implicit val playerSerde: Serde[Player] = avroSerde()
   implicit val moveSerde: Serde[Move] = avroSerde()
 
@@ -14,5 +15,6 @@ trait Serdes extends AvroSupport {
   implicit val gameScoreSerde: Serde[GameScore] = avroSerde()
   implicit val playerMoveSerde: Serde[PlayerMove] = avroSerde()
 
-  implicit val playerGameKpiSerde: Serde[PlayerGameKpi] = avroSerde()
+  implicit val gameKpiSerde: Serde[GameKpi] = avroSerde()
+  implicit val playerKpiSerde: Serde[PlayerKpi] = avroSerde()
 }

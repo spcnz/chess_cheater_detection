@@ -9,11 +9,11 @@ import org.apache.kafka.streams.scala.kstream._
 import org.apache.kafka.streams.scala.serialization.Serdes._
 import org.apache.kafka.streams.state.Stores
 import yauza.avro.message.chess._
-import yauza.chess.aggregator.PlayerGameKpiAggregator
+import yauza.chess.aggregator.GameKpiAggregator
 import yauza.chess.engine.Engine
-import yauza.chess.joiner.MoveGameJoiner
+import yauza.chess.joiner.{GameKpiGameResultJoiner, MoveGameJoiner}
 import yauza.chess.mapper.ChessAnalysisMapper
-import yauza.chess.processor.{GameScoreProcessor, UniqueUpdateProcessor}
+import yauza.chess.processor.{GameScoreProcessor, PlayerKpiProcessor, UniqueUpdateProcessor}
 
 import java.time.Duration
 
@@ -21,7 +21,8 @@ case class TopologyBuilder(chessEngine: Engine)(implicit config: Config)
     extends Serdes
     with ChessAnalysisMapper
     with MoveGameJoiner
-    with PlayerGameKpiAggregator
+    with GameKpiGameResultJoiner
+    with GameKpiAggregator
     with LazyLogging {
 
   val builder: StreamsBuilder = new StreamsBuilder()
@@ -42,8 +43,24 @@ case class TopologyBuilder(chessEngine: Engine)(implicit config: Config)
         intSerde
       )
     )
-    val playerStream: KStream[String, Player] =
-      builder.stream(config.chessAnalyzer.topic.input.player)
+
+    val playerTable: KTable[String, PlayerKpi] =
+      builder
+        .stream[String, Player](config.chessAnalyzer.topic.input.player)
+        .mapValues(mapPlayerKpi)
+        .peek((k, _) =>
+          logger.whenDebugEnabled {
+            logger.debug(s"Initialized player KPI for player: $k")
+          }
+        )
+        .toTable(
+          Named.as(config.chessAnalyzer.store.playerKpi),
+          Materialized.as(config.chessAnalyzer.store.playerKpi)(stringSerde, playerKpiSerde)
+        )
+
+    val gameResultTable: KTable[String, GameResult] =
+      builder
+        .table[String, GameResult](config.chessAnalyzer.topic.input.gameResult)
 
     val gameTable: KTable[String, Game] =
       builder
@@ -55,8 +72,8 @@ case class TopologyBuilder(chessEngine: Engine)(implicit config: Config)
         .toTable(
           Named.as(config.chessAnalyzer.store.game),
           Materialized
-            .`with`(stringSerde, gameSerde)
-        ) // ovo with named named as ne radi, kreira se topic sa 0003-changelog za ovo
+            .as(config.chessAnalyzer.store.game)(stringSerde, gameSerde)
+        )
 
     val moveStream: KStream[String, MoveWithScore] =
       builder
@@ -76,7 +93,7 @@ case class TopologyBuilder(chessEngine: Engine)(implicit config: Config)
           }
         )
 
-    val moveGameStream =
+    val moveGameStream: KStream[String, PlayerMove] =
       moveStream
         .join(gameTable)(joinMoveWithGame)
         .process[String, PlayerMove](
@@ -93,28 +110,40 @@ case class TopologyBuilder(chessEngine: Engine)(implicit config: Config)
           }
         )
 
-    moveGameStream
-      .groupBy((_, value) => value.id + "|" + value.gameId)
-      .windowedBy(SessionWindows.ofInactivityGapWithNoGrace(Duration.ofSeconds(5)))
-      .aggregate(initializer =
-        PlayerGameKpi(
-          id = "-1",
-          username = "-1",
-          gameId = "-1"
+    val gameKpiStream =
+      moveGameStream
+        .groupBy((_, value) => value.id + "|" + value.gameId)
+        .windowedBy(SessionWindows.ofInactivityGapWithNoGrace(Duration.ofSeconds(5)))
+        .aggregate(initializer =
+          GameKpi(
+            id = "-1",
+            username = "-1",
+            gameId = "-1"
+          )
+        )(aggregate, merge)(Materialized.`with`(stringSerde, gameKpiSerde))
+        .toStream(Named.as("processed-player-game-kpi"))
+        .peek((k, v) =>
+          logger.whenDebugEnabled {
+            logger.debug(s"Enriched player game {key: $k} with KPI: $v")
+          }
         )
-      )(aggregate, merge)(Materialized.`with`(stringSerde, playerGameKpiSerde))
-      .toStream(Named.as("processed-player-game-kpi"))
-      .peek((k, v) =>
-        logger.whenDebugEnabled {
-          logger.debug(s"Enriched player game {key: $k} with KPI: $v")
-        }
+        .filter((_, v) => v != null)
+        .selectKey((window, value) => value.gameId)
+        .repartition(
+          Repartitioned
+            .`with`(config.chessAnalyzer.topic.sink.gameKpi)
+        )
+
+    gameKpiStream
+      .toTable(Named.as("game-kpi-table"))
+      .leftJoin(gameResultTable)(joinGameKpiWithGameResult)
+      .toStream(Named.as("game-kpi-with-result"))
+      .process[String, PlayerKpi](
+        () => PlayerKpiProcessor(config.chessAnalyzer.store.playerKpi),
+        config.chessAnalyzer.store.playerKpi
       )
-      .filter((_, v) => v != null)
-      .selectKey((window, value) => value.id)
-      .repartition(
-        Repartitioned
-          .`with`(config.chessAnalyzer.topic.sink.playerGameKpi)
-      )
+      .selectKey((_, value) => value.id)
+      .to(config.chessAnalyzer.topic.sink.playerKpi)
 
     builder.build()
   }

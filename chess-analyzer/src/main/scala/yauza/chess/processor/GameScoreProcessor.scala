@@ -63,7 +63,8 @@ case class GameScoreProcessor(gameScoreStoreName: String)
             gameId = score.id,
             lastMove = gameWithMoveScore.lastMove,
             label = getLabel(previousScore, gameWithMoveScore.playerScore),
-            score = gameWithMoveScore.playerScore
+            score = gameWithMoveScore.playerScore,
+            gameStatus = gameWithMoveScore.status
           )
         )
     )
