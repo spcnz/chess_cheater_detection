@@ -3,7 +3,7 @@ package yauza.chess.processor
 import com.typesafe.scalalogging.LazyLogging
 import org.apache.kafka.streams.processor.api.{Processor, ProcessorContext, Record}
 import org.apache.kafka.streams.state.{TimestampedKeyValueStore, ValueAndTimestamp}
-import yauza.avro.message.chess.{count, GameKpi, PlayerKpi}
+import yauza.avro.message.chess.{GameKpi, PlayerKpi, count}
 
 import java.time.Instant
 
@@ -33,10 +33,10 @@ case class PlayerKpiProcessor(playerKpiStoreName: String)
   ): Unit = {
     val gameKpi = record.value
 
-    val playerKpi: PlayerKpi = playerKpiStore.get(gameKpi.id).value()
-    if (playerKpi != null) {
+    val playerKpi: Option[PlayerKpi] = Option(playerKpiStore.get(gameKpi.id)).map(_.value())
+    if (playerKpi.isDefined) {
 
-      val updatedKpi = updatePlayerKpi(playerKpi, gameKpi)
+      val updatedKpi = updatePlayerKpi(playerKpi.get, gameKpi)
 
       if (gameKpi.gameStatus != "started") {
         // update player KPI store
