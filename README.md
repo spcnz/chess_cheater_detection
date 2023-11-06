@@ -1,57 +1,91 @@
-# Stream processing engine comparsion
-The goal of the this project is to acquire expertise in different streaming technologies. These include Kafka Streams, Flink and Spark Structured Streaming.
+# Chess Cheater Detection
 
-## Use Case - Cheater detection in chess
-Lichess.org has an open API that can serve information about chess games and players. We 	can use the API to calculate statistics about players and attempt to detect when a player uses a chess engine to generate their moves.
-Kafka producers
+Lichess.org provides an open API that offers information about chess games and players. This information is used to calculate statistics about players and to identify instances where a player might be using a chess engine to generate their moves.
 
 ### Producers
-We have created four types of Kafka producers that query the Lichess API and produce their outputs to Kafka topics:
-1. `Games producer` - queries https://lichess.org/api/tv/bullet to get a list of currently active bullet games. The output of this producer includes information such as the game ID, white and black player IDs, etc.
-2. `Moves producer` - queries https://lichess.org/api/stream/game/{gameId} to get a stream of moves in a single game. The output contains information about each move played and the index of the move in the game (event timestamp)
-3. `Game result producer` - queries https://lichess.org/api/stream/game/{gameId} to get information about when the game ended and what the result was
-4. `Players producer` - queries https://lichess.org/api/user/{userId} to get information about players, such as their current rank in different game modes
-<br/><br/><b>None of the topics guarantee correct order of the messages sent, and all of them can produce duplicate messages for the same event.</b>
-<br/>Produced messages follow schemas described at lichess.api  for corresponding api calls. Some commonly used abbreviations are:
+Four types of Kafka producers are created, each responsible for querying the Lichess API and producing its output to Kafka topics:
+
+1. **Games Producer**: Queries https://lichess.org/api/tv/bullet to obtain a list of currently active bullet games. The output of this producer includes information such as the game ID, white and black player IDs, and more.
+
+2. **Moves Producer**: Queries https://lichess.org/api/stream/game/{gameId} to get a stream of moves in a single game. The output contains information about each move played and the index of the move in the game.
+
+3. **Game Result Producer**: Similar to the `Moves Producer` this producer queries the same API (https://lichess.org/api/stream/game/{gameId}) but ignores move messages. It only forwards game-related messages and transforms them to obtain information about the game's result.
+
+4. **Players Producer**: Queries https://lichess.org/api/user/{userId} to gather information about players, including their current rank in different game modes and total games played, among other details.
+
+**NOTE**: Producers may produce duplicate messages for the same event.
+
+Produced messages adhere to schemas described at `lichess.api` for corresponding API calls. Some commonly used abbreviations are:
 ```
 fen : Forsyth-Edwards Notation is the standard notation to describe positions of a chess game
 bc, wc: black counter, white counter, reprsents time left for each player in seconds
 perf: user’s performance for each game variant (e.g. blitz, bullet..) 
 ```
 
-## Tasks
-1. Deduplicate messages from each topic (Guarantee end-to-end exactly once semantics e.g. a game result message must be processed only once)
-2. Use players producer as “initial import” of the players - that is, only consider the first message for each unique player. The goal is to use Yauza to calculate player statistics through time
-3. For each player, calculate the following KPIs:
-   - Win/loss count
-   - Win rate
-   - Number of total correct/incorrect moves - Use the Stockfish chess engine to determine the number of correct and incorrect moves the player makes
-   - Mean player accuracy
-   - Correct Incorrect moves ratio - Total number of correct moves / total number of incorrect moves
-   - Macro - Calculate accuracy per game and then take the average of all accuracies
-   - Median player accuracy - Calculate accuracy per game and then take the value at the 50th percentile
-   - Standard deviation of accuracy
-   - Whether a player is cheating - If a player has a streak of games where his accuracy is an outlier (e.g. a user has 3 games where his accuracy is higher than mean + 2 * standard deviation)
 
-## Output topics:
-### player-kpi-topic  
+## Topics
+**Input topics**:
+- `yauza.moves`
+- `yauza.games`
+- `yauza.game-results`
+- `yauza.players`
+
+**Output topics**:
+- `yauza.move.score`
+- `yauza.game.kpi`
+- `yauza.player.kpi`
+- `yauza.player.suspicious`
+
+| Topic                 | Cleanup Policy |
+|-----------------------|----------------|
+| yauza.games           | delete         |
+| yauza.moves           | delete         |
+| yauza.game-results    | delete         |
+| yauza.players         | compact        |
+| yauza.move.score      | delete         |
+| yauza.game.kpi        | compact        |
+| yauza.player.kpi      | compact        |
+| yauza.player.suspicious | delete         |
+
+**NOTE**: All topics are configured with `compression.type: gzip`.
+
+### Consumer
+The Kafka Streams application consumes input topics and performs aggregation and transformation on messages to calculate various KPIs for both players and games.
+
+## Tasks
+1. Deduplicate messages from each topic.
+2. Use the players producer as an "initial import" of the players, considering only the first message for each unique player. The goal is to use Yauza to calculate player statistics over time.
+3. Define a move's category using the Stockfish engine ([Stockfish's UCI](https://gist.github.com/aliostad/f4470274f39d29b788c1b09519e67372)) and calculate the score for the player after that move.
+4. For each game, calculate the following KPIs:
+   1. Number of `Brilliant` moves.
+   2. Number of `Excellent` moves.
+   3. Number of `Good` moves.
+   4. Number of `Inaccuracy` moves.
+   5. Number of `Mistake` moves.
+   6. Number of `Blunder` moves.
+   7. Player's accuracy.
+5. For each player, calculate the following KPIs:
+   1. Win count.
+   2. Loss count.
+   3. Draw count.
+   4. Rated games count.
+   5. Number of played games.
+   6. Win/Loss ratio.
+   7. Number of total correct/incorrect moves.
+   8. Correct/Incorrect moves ratio.
+   9. Mean player's accuracy: Number of correct moves / Total number of moves.
+   10. Macro accuracy: Average of accuracies for each game that the player played.
+   11. Median accuracy: 50th percentile of the accuracies of every game played.
+   12. Standard deviation of accuracy.
+6. Detect potential cheaters: If a player has three or more games where their accuracy follows:
 ```
-Key: playerId: string
-Value: PlayerKpi.avsc
-```
-### suspicious-players 
-```
-Key: playerId: string
-Value: SuspiciousPlayer.avsc 
-````
-## Streaming technology metrics
-Other than the code, the output of Yauza should contain a document in which all of the used streaming technologies are compared. <br/> The list of metrics/characteristics that should be described:
-- Latency
-- Time domain skew
-- Delivery guarantees
-- State management - how is the state managed, recovering from faults
-- Windowing - which types of windows are supported?
-- Watermarking - how to know where the stream is?
-- Time management - event time, processing time etc.
-- Operational complexity - how is the stream processing program deployed? How easily can it be scaled? What extra infrastructure tools are necessary?
-- Development experience - how good are the docs? How developed is the community - how easy/hard is it to find answers on forums? Which programming languages, testing frameworks are supported?
+      gameAccuracy >= meanPlayerAccuracy + 2 * STD
+ ```
+
+## Topology
+The Kafka Streams application's topology is shown below:
+
+![Topology Diagram](./diagram.png)
+
+### Infrastructure
+The producer and consumer applications, along with the Kafka cluster and Schema registry, are deployed using Docker containers. The containers are orchestrated using the `docker-compose` tool. Configuration details can be found in the `./infrastructure/docker-compose.yml` file. All relevant files for setting up and deploying the cluster are inside [infrastucture folder](https://github.com/spcnz/chess_cheater_detection/tree/main/infrastructure).
