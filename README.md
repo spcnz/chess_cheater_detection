@@ -2,7 +2,7 @@
 
 Lichess.org provides an open API that offers information about chess games and players. This information is used to calculate statistics about players and to identify instances where a player might be using a chess engine to generate their moves.
 
-### Producers
+## Producers
 Four types of Kafka producers are created, each responsible for querying the Lichess API and producing its output to Kafka topics:
 
 1. **Games Producer**: Queries https://lichess.org/api/tv/bullet to obtain a list of currently active bullet games. The output of this producer includes information such as the game ID, white and black player IDs, and more.
@@ -23,7 +23,7 @@ perf: user’s performance for each game variant (e.g. blitz, bullet..)
 ```
 
 
-## Topics
+### Topics
 **Input topics**:
 - `yauza.moves`
 - `yauza.games`
@@ -49,10 +49,15 @@ perf: user’s performance for each game variant (e.g. blitz, bullet..)
 
 **NOTE**: All topics are configured with `compression.type: gzip`.
 
-### Consumer
+## Consumer
 The Kafka Streams application consumes input topics and performs aggregation and transformation on messages to calculate various KPIs for both players and games.
 
-## Tasks
+### Topology
+The Kafka Streams application's topology is shown below:
+
+![Topology Diagram](./diagram.png)
+
+### Tasks
 1. Deduplicate messages from each topic.
 2. Use the players producer as an "initial import" of the players, considering only the first message for each unique player. The goal is to use Yauza to calculate player statistics over time.
 3. Define a move's category using the Stockfish engine ([Stockfish's UCI](https://gist.github.com/aliostad/f4470274f39d29b788c1b09519e67372)) and calculate the score for the player after that move.
@@ -82,10 +87,7 @@ The Kafka Streams application consumes input topics and performs aggregation and
       gameAccuracy >= meanPlayerAccuracy + 2 * STD
  ```
 
-## Topology
-The Kafka Streams application's topology is shown below:
 
-![Topology Diagram](./diagram.png)
 
-### Infrastructure
+## Infrastructure
 The producer and consumer applications, along with the Kafka cluster and Schema registry, are deployed using Docker containers. The containers are orchestrated using the `docker-compose` tool. Configuration details can be found in the `./infrastructure/docker-compose.yml` file. All relevant files for setting up and deploying the cluster are inside [infrastucture folder](https://github.com/spcnz/chess_cheater_detection/tree/main/infrastructure).
