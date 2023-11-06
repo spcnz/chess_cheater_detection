@@ -155,7 +155,10 @@ case class TopologyBuilder(chessEngine: Engine)(implicit config: Config)
             .getOrElse(0.0) + 2.0 * kpi.accuracySTD.getOrElse(0.0))
         ) >= 3
       )
-      .to(config.chessAnalyzer.topic.sink.suspiciousPlayer)
+      .mapValues(kpi => kpi.username)
+      .to(config.chessAnalyzer.topic.sink.suspiciousPlayer)(
+        Produced.`with`(stringSerde, stringSerde)
+      )
 
     builder.build()
   }
