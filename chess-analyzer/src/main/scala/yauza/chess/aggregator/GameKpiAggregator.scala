@@ -73,12 +73,15 @@ trait GameKpiAggregator {
     mergedKpi
   }
 
-  protected def calcAccuracy(kpi: GameKpi): Double =
-    Seq(
+  protected def calcAccuracy(kpi: GameKpi): Double = {
+
+    val positiveMoves = Seq(
       kpi.brilliantMoveCounter,
       kpi.goodMoveCounter,
       kpi.excellentMoveCounter
-    ).map(_.getOrElse(0L)).sum.toDouble / Seq(
+    ).map(_.getOrElse(0L)).sum.toDouble
+
+    val totalMoves = Seq(
       kpi.brilliantMoveCounter,
       kpi.goodMoveCounter,
       kpi.excellentMoveCounter,
@@ -86,4 +89,14 @@ trait GameKpiAggregator {
       kpi.mistakeMoveCounter,
       kpi.blunderMoveCounter
     ).map(_.getOrElse(0L)).sum.toDouble
+
+    safeDivide(positiveMoves, totalMoves)
+  }
+
+  private def safeDivide(numerator: Double, denominator: Double): Double = {
+    if (denominator == 0.0) {
+      return 0.0
+    }
+    numerator / denominator
+  }
 }

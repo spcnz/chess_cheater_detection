@@ -23,6 +23,7 @@ services:
     volumes:
       - ./update_run.sh:/tmp/update_run.sh
     command: "bash -c 'if [ ! -f /tmp/update_run.sh ]; then echo \"ERROR: Did you forget the update_run.sh file that came with this docker-compose.yml file?\" && exit 1 ; else /tmp/update_run.sh && /etc/confluent/docker/run ; fi'"
+  
   broker2:
     image: confluentinc/cp-kafka:7.3.1
     container_name: broker2
@@ -46,6 +47,7 @@ services:
     volumes:
       - ./update_run.sh:/tmp/update_run.sh
     command: "bash -c 'if [ ! -f /tmp/update_run.sh ]; then echo \"ERROR: Did you forget the update_run.sh file that came with this docker-compose.yml file?\" && exit 1 ; else /tmp/update_run.sh && /etc/confluent/docker/run ; fi'"
+  
   broker3:
     image: confluentinc/cp-kafka:7.3.1
     container_name: broker3
@@ -87,7 +89,7 @@ services:
       SCHEMA_REGISTRY_LISTENERS: http://0.0.0.0:8081
 
   init:
-    image: confluentinc/cp-kafka:7.3.0
+    image: confluentinc/cp-kafka:7.3.1
     depends_on:
       - broker1
       - broker2
@@ -107,23 +109,88 @@ services:
       kafka-topics --bootstrap-server broker1:29092 --create --if-not-exists --topic yauza.move.score --replication-factor 3 --partitions 30 --config cleanup.policy=delete --config compression.type=gzip
       kafka-topics --bootstrap-server broker1:29092 --create --if-not-exists --topic game-score-store --replication-factor 3 --partitions 30 --config compression.type=gzip
       kafka-topics --bootstrap-server broker1:29092 --create --if-not-exists --topic unique-updates-store --replication-factor 3 --partitions 30  --config compression.type=gzip
-      kafka-topics --bootstrap-server broker1:29092 --create --if-not-exists --topic yauza.player.kpi -replication-factor 3 --partitions 30  --config cleanup.policy=comapct --config compression.type=gzip
+      kafka-topics --bootstrap-server broker1:29092 --create --if-not-exists --topic yauza.player.kpi -replication-factor 3 --partitions 30  --config cleanup.policy=compact --config compression.type=gzip
       kafka-topics --bootstrap-server broker1:29092 --create --if-not-exists --topic yauza.player.suspicious -replication-factor 3 --partitions 30 --config compression.type=gzip
-
-
 
       echo -e 'Successfully created the following topics:'
       kafka-topics --bootstrap-server broker1:29092 --list
-      ls
-
+      
+      echo -e 'Registering schemas'
       python /init/register_schema.py http://schema-registry:8081 
       "
     volumes:
       - ./init:/init/
 
+  influxdb:
+    image: influxdb:1.8
+    container_name: influxdb
+    ports:
+      - "8086:8086"
+    environment:
+      INFLUXDB_DB: mydb # Name of the database
+      INFLUXDB_ADMIN_ENABLED: "true"
+      INFLUXDB_ADMIN_USER: admin
+      INFLUXDB_ADMIN_PASSWORD: admin # Please choose a safer password
+    volumes:
+      - influxdb_data:/var/lib/influxdb
+
+  connect:
+    image: confluentinc/cp-kafka-connect:latest
+    container_name: kafka-connect
+    depends_on:
+      - broker1
+      - broker2
+      - broker3
+      - influxdb
+    ports:
+      - "8083:8083"
+    environment:
+      CONNECT_BOOTSTRAP_SERVERS: 'broker1:29092,broker2:29093,broker3:29094'
+      CONNECT_REST_PORT: 8083
+      CONNECT_GROUP_ID: 'quickstart'
+      CONNECT_CONFIG_STORAGE_TOPIC: 'connect-configs'
+      CONNECT_OFFSET_STORAGE_TOPIC: 'connect-offsets'
+      CONNECT_STATUS_STORAGE_TOPIC: 'connect-status'
+      CONNECT_KEY_CONVERTER: 'org.apache.kafka.connect.storage.StringConverter'
+      CONNECT_VALUE_CONVERTER: 'io.confluent.connect.avro.AvroConverter'
+      CONNECT_KEY_CONVERTER_SCHEMA_REGISTRY_URL: 'http://schema-registry:8081'
+      CONNECT_VALUE_CONVERTER_SCHEMA_REGISTRY_URL: 'http://schema-registry:8081'
+      CONNECT_CONFIG_STORAGE_REPLICATION_FACTOR: '3'
+      CONNECT_OFFSET_STORAGE_REPLICATION_FACTOR: '3'
+      CONNECT_STATUS_STORAGE_REPLICATION_FACTOR: '3'
+      CONNECT_PLUGIN_PATH: '/usr/share/java,/usr/share/confluent-hub-components'
+      CONNECT_REST_ADVERTISED_HOST_NAME: 'kafka-connect'
+    volumes:
+      - ./init/init-kafka-connect.sh:/usr/local/bin/init-kafka-connect.sh
+    # command: >
+    #   bash -c "chmod +x /usr/local/bin/init-kafka-connect.sh && /etc/confluent/docker/run"
+    command: 
+      - bash 
+      - -c 
+      - |
+        echo "Installing connector plugins"
+        confluent-hub install --no-prompt confluentinc/kafka-connect-influxdb:1.1.2
+        chmod +x /usr/local/bin/init-kafka-connect.sh
+        echo "Launching Kafka Connect worker"
+        /etc/confluent/docker/run 
+    # entrypoint: [ "/usr/local/bin/init-kafka-connect.sh" ]
+
+
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: admin # Please choose a safer password
+    depends_on:
+      - influxdb
+    volumes:
+      - grafana_data:/var/lib/grafana
+
 volumes:
   zookeeper_data:
   zookeeper_log:
-  broker_data:
-  broker2_data:
-  broker3_data:
+  grafana_data:
+  influxdb_data:

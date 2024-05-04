@@ -3,7 +3,7 @@ package yauza.avro.message.chess
 
 import scala.annotation.switch
 
-final case class GameResultVariant(var key: String, var name: String, var short : String)
+final case class GameResultVariant(var key: String, var name: String, var short: String)
     extends org.apache.avro.specific.SpecificRecordBase {
   def this() = this("", "", "")
   def get(field$ : Int): AnyRef =

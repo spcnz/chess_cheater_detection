@@ -1,0 +1,13 @@
+{
+  "name" : "GameResultSinkConnector",
+  "config" : {
+          "connector.class" : "io.confluent.influxdb.InfluxDBSinkConnector",
+          "tasks.max" : "1",
+          "topics" : "yauza.game-results",
+          "influxdb.url" : "http://influxdb:8086",
+          "influxdb.db" : "lichess",
+          "measurement.name.format" : "${topic}",
+          "value.converter": "io.confluent.connect.avro.AvroConverter",
+          "value.converter.schema.registry.url": "http://schema-registry:8081"
+  }
+} 

@@ -91,7 +91,7 @@ class GameKpiAggregatorTest extends UnitTest with GameKpiAggregator {
       blunderMoveCounter = Some(0L)
     )
 
-    calcAccuracy(kpi).isNaN should be(true)
+    calcAccuracy(kpi) should be(0.0)
   }
 
   behavior of "merge"

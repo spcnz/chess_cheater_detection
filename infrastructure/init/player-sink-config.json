@@ -1,0 +1,18 @@
+{
+  "name": "PlayersSinkConnector",
+  "config": {
+      "connector.class": "io.confluent.influxdb.InfluxDBSinkConnector",
+      "tasks.max": "1",
+      "topics": "chess-analyzer-stream-player-kpi-store-changelog",
+      "influxdb.url": "http://influxdb:8086",
+      "influxdb.db": "lichess",
+      "measurement.name.format": "yauza.player.stats",
+      "value.converter": "io.confluent.connect.avro.AvroConverter",
+      "value.converter.schema.registry.url": "http://schema-registry:8081",
+      "transforms": "filter,flatten",
+      "transforms.filter.type": "org.apache.kafka.connect.transforms.ReplaceField$Value",
+      "transforms.filter.blacklist": "accuracies",
+      "transforms.flatten.type": "org.apache.kafka.connect.transforms.Flatten$Value",
+      "transforms.flatten.delimiter": "."
+  }
+}

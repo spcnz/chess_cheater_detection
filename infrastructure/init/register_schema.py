@@ -137,7 +137,7 @@ def read_schema(path: str) -> str:
 if __name__ == "__main__":
     schema_registry_url = sys.argv[1]
     for subject_name in schema_references:
-        schema = read_schema(path=f"./avro/{subject_name}.avsc")
+        schema = read_schema(path=f"/init/avro/{subject_name}.avsc")
         subject = f"{namespace}.{subject_name}"
         body = {"schema": schema, "schemaType": "AVRO"}
         if schema_references[subject_name]:
