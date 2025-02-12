@@ -22,7 +22,6 @@ case class StockfishEngine(
   val mateScorePattern: Regex = (matePrefix + "[-+]?[0-9]+").r
 
   override def start(): Unit = {
-//    process = Process(yauza.chess.config.chessAnalyzer.engine.path).run(
     process = Process("stockfish").run(
       new ProcessIO(
         writeInput = (stdout: OutputStream) => inputStream = new OutputStreamWriter(stdout),
@@ -40,9 +39,6 @@ case class StockfishEngine(
       .takeWhile(_ != "uciok")
       .mkString("\n")
   }
-
-  override private[engine] def setPosition(fen: String): Unit =
-    inputStream.write(s"position fen $fen\n")
 
   override def getPointOfView(fen: String): String =
     Try(fen.split(" ")(1)) match {
@@ -90,6 +86,9 @@ case class StockfishEngine(
       centipawnScore.map(_ => ScoreType.Centipawn).getOrElse(ScoreType.Mate)
     )
   }
+
+  override private[engine] def setPosition(fen: String): Unit =
+    inputStream.write(s"position fen $fen\n")
 
   private[engine] def extractScore(
       info: String,

@@ -113,7 +113,7 @@ case class TopologyBuilder(chessEngine: Engine)(implicit config: Config)
     val gameKpiStream =
       moveGameStream
         .groupBy((_, value) => value.id + "|" + value.gameId)
-        .windowedBy(SessionWindows.ofInactivityGapWithNoGrace(Duration.ofSeconds(5)))
+        .windowedBy(SessionWindows.ofInactivityGapWithNoGrace(Duration.ofSeconds(300)))
         .aggregate(initializer =
           GameKpi(
             id = "-1",

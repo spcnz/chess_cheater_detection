@@ -175,8 +175,6 @@ services:
         /etc/confluent/docker/run 
     # entrypoint: [ "/usr/local/bin/init-kafka-connect.sh" ]
 
-
-
   grafana:
     image: grafana/grafana:latest
     container_name: grafana
